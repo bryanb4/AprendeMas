@@ -1,0 +1,102 @@
+// src/pages/GeometriaPage.jsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+
+const temasGeometria = [
+  "Ángulos y triángulos",
+  "Rectas paralelas cortadas por una secante",
+  "Congruencia y semejanza",
+  "Teorema de Pitágoras y triángulos especiales",
+  "Círculos",
+  "Sólidos",
+  "Perímetro, área y volumen"
+];
+
+function GeometriaPage() {
+  const navigate = useNavigate();
+  const [selectedTopic, setSelectedTopic] = useState(null);
+
+  const handleTabChange = (tab) => navigate('/dashboard', { state: { activeTab: tab } });
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
+  if (selectedTopic) {
+    return (
+      <div className="dashboard-layout">
+        <Sidebar activeTab="aprendizaje" onTabChange={handleTabChange} onLogout={handleLogout} />
+        <main className="main-content">
+          <button className="btn-volver" onClick={() => setSelectedTopic(null)}>
+            ← Volver a temas de geometría
+          </button>
+          <div className="contenido-card">
+            <h1 className="titulo-seccion">{selectedTopic}</h1>
+            <hr className="divisor" />
+            <div className="cuerpo-texto">
+              <p>📐 Contenido en desarrollo. Próximamente encontrarás explicaciones, ejemplos y ejercicios de este tema.</p>
+              <div className="nota-box" style={{ background: '#FFF8E1' }}>💡 ¡Estamos trabajando para traerte el mejor material!</div>
+            </div>
+          </div>
+        </main>
+        <style>{`
+          .dashboard-layout { display: flex; min-height: 100vh; background-color: #f4f2fb; font-family: 'Segoe UI', system-ui, sans-serif; }
+          .main-content { flex: 1; padding: 40px 60px; overflow-y: auto; }
+          .btn-volver { background: none; border: none; color: #764ba2; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; padding: 0; }
+          .btn-volver:hover { opacity: 0.7; }
+          .contenido-card { background: white; border-radius: 20px; padding: 40px 48px; box-shadow: 0 4px 20px rgba(118,75,162,0.08); }
+          .titulo-seccion { color: #1a1b3a; font-size: 2rem; margin: 0 0 12px; }
+          .divisor { border: 0; border-top: 2px solid #ede8f8; margin-bottom: 28px; }
+          .cuerpo-texto { font-size: 1.05rem; line-height: 1.85; color: #333; }
+          .cuerpo-texto p { margin: 0 0 14px; }
+          .nota-box { background: #fff8e1; border-left: 4px solid #f39c12; border-radius: 10px; padding: 14px 20px; margin-bottom: 18px; font-size: 0.95rem; color: #7a5c00; }
+          @media (max-width: 900px) { .main-content { padding: 24px 20px; } .contenido-card { padding: 24px 20px; } }
+        `}</style>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dashboard-layout">
+      <Sidebar activeTab="aprendizaje" onTabChange={handleTabChange} onLogout={handleLogout} />
+      <main className="main-content">
+        <button className="btn-volver" onClick={() => navigate('/dashboard', { state: { activeTab: 'aprendizaje' } })}>
+          ← Volver a los módulos
+        </button>
+        <div className="contenido-card">
+          <h1 className="titulo-seccion">Geometría y Medición</h1>
+          <hr className="divisor" />
+          <ul className="topic-list">
+            {temasGeometria.map((tema, idx) => (
+              <li key={idx} className="topic-item">
+                <span className="topic-name">{tema}</span>
+                <button className="btn-start-topic" onClick={() => setSelectedTopic(tema)}>
+                  Comenzar
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </main>
+      <style>{`
+        .dashboard-layout { display: flex; min-height: 100vh; background-color: #f4f2fb; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .main-content { flex: 1; padding: 40px 60px; overflow-y: auto; }
+        .btn-volver { background: none; border: none; color: #764ba2; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; padding: 0; }
+        .btn-volver:hover { opacity: 0.7; }
+        .contenido-card { background: white; border-radius: 20px; padding: 40px 48px; box-shadow: 0 4px 20px rgba(118,75,162,0.08); }
+        .titulo-seccion { color: #1a1b3a; font-size: 2rem; margin: 0 0 12px; }
+        .divisor { border: 0; border-top: 2px solid #ede8f8; margin-bottom: 28px; }
+        .topic-list { list-style: none; padding: 0; margin: 0; }
+        .topic-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #f0e8ff; background-color: #ffffff; border-radius: 12px; margin-bottom: 8px; transition: background 0.2s; }
+        .topic-item:hover { background-color: #faf8ff; }
+        .topic-name { font-size: 1.1rem; color: #2d1b45; text-align: left; }
+        .btn-start-topic { background-color: #764ba2; color: white; border: none; border-radius: 30px; padding: 6px 16px; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 2px 8px rgba(118,75,162,0.2); line-height: 1.4; min-width: 80px; }
+        .btn-start-topic:hover { background-color: #5f3b85; transform: scale(1.02); }
+        @media (max-width: 900px) { .main-content { padding: 24px 20px; } .contenido-card { padding: 24px 20px; } }
+      `}</style>
+    </div>
+  );
+}
+
+export default GeometriaPage;
