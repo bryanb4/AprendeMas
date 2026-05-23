@@ -9,6 +9,7 @@ import AritmeticaPage from './pages/AritmeticaPage.jsx';
 import AlgebraPage from './pages/AlgebraPage.jsx';
 import GeometriaPage from './pages/GeometriaPage.jsx';
 import EstadisticaPage from './pages/EstadisticaPage.jsx';
+import GenerarPreguntas from './pages/GenerarPreguntaIA.jsx'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/algebra" element={<AlgebraPage />} />
         <Route path="/geometria" element={<GeometriaPage />} />
         <Route path="/estadistica" element={<EstadisticaPage />} />
+        <Route path="/adminIA" element={<GenerarPreguntas />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

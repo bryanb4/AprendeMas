@@ -19,6 +19,8 @@ router.post('/register', authController.register);
 // -------- MATERIAS --------
 router.get('/materias', subjectController.getSubjects);
 router.get('/materias/:id/temas', subjectController.getTopics);
+router.post('/materias', subjectController.setSubject);
+router.post('/temas', subjectController.setTopic);
 
 
 // -------- PERFIL --------
