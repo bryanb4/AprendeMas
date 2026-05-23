@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 
@@ -6,16 +6,46 @@ function QuestionGenerate() {
   const navigate = useNavigate();
 
   const [level, setLevel] = useState('Básico');
+  const [materias, setMaterias] = useState([]);
+  const [temas, setTemas] = useState([]);
+  const [selectedMateria, setSelectedMateria] = useState('');
+  const [selectedTema, setSelectedTema] = useState('');
 
   const handleTabChange = (tab) => {
     navigate('/dashboard', { state: { activeTab: tab } });
   };
+
+  const fetchTopics = async (materiaId) => {
+  try {
+    const response = await fetch(
+         `http://localhost:5000/api/auth/materias/${materiaId}/temas`
+        );
+    const data = await response.json();
+    setTemas(data);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const fetchMaterias = async () => {
+    try{
+        const response = await fetch (`http://localhost:5000/api/auth/materias`);
+        const data = await response.json();
+        setMaterias(data);
+        
+    }catch(error){
+        console.log(error);
+    }
+
+}
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
   };
 
+//   useEffect (() => {fetchMaterias()}, []);
   return (
     <div className="dashboard-layout">
       <Sidebar
@@ -39,9 +69,21 @@ function QuestionGenerate() {
               <h2>⚙️ Configuración de IA</h2>
 
               <label>MATERIA</label>
-              <select>
-                <option>Seleccione materia</option>
-              </select>
+              <select 
+              value={selectedMateria} 
+              onChange={(e) => {
+                const materiaId = e.target.value;
+                setSelectedMateria(materiaId);
+                fetchTopics(materiaId);
+                }}>
+                    <option value="">
+                        Selecciona una materia
+                    </option>
+            {materias.map((materia) => (
+                <option key={materia.id} value={materia.id} >
+                    {materia.nombre}</option>
+                ))}
+                </select>
 
               <label>TEMA ESPECÍFICO</label>
               <select>
