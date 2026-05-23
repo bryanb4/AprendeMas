@@ -3,6 +3,7 @@ const questionSchema = {
   properties: {
     materia_solicitada: { type: "string" },
     tema_solicitado: { type: "string" },
+    nivel_solicitado: {type: "string"},
     pregunta: { type: "string" },
     opciones: {
       type: "array",
@@ -14,6 +15,7 @@ const questionSchema = {
   required: [
     "materia_solicitada",
     "tema_solicitado",
+    "nivel_solicitado",
     "pregunta",
     "opciones",
     "respuesta_correcta",

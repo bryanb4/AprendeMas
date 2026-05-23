@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { data, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 
 function QuestionGenerate() {
@@ -10,6 +10,26 @@ function QuestionGenerate() {
   const [temas, setTemas] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState('');
   const [selectedTema, setSelectedTema] = useState('');
+  const [preguntaGenerada, setPreguntaGenerada] = useState('');
+  const [estadoTitulo, setEstadoTitulo] = useState('Listo para Generar');
+
+  const [opcionesGeneradas, setOpcionesGeneradas] = useState([]);
+  const [respuestaGenerada, setRespuestaGenerada] = useState('');
+  const [explicacionGenerada, setExplicacionGenerada] = useState('');
+
+  const hardcodeinfo = {materia_solicitada: "Matematicas",
+    tema_solicitado: "Exponentes",
+    nivel_solicitado: "Avanzado",
+    pregunta: "Si $ (5^{2})^{x} = 125^{x+1}$, ¿cuál es el valor de $x$?",
+    opciones: [
+        "-3",
+        "-2",
+        "3",
+        "0"
+    ],
+    respuesta_correcta: "-3",
+    explicacion: "Primero expresamos ambos lados con la misma base. \n\n- Lado izquierdo: $ (5^{2})^{x}=5^{2x}$.\n- Lado derecho: $125^{x+1}= (5^{3})^{x+1}=5^{3(x+1)}=5^{3x+3}$.\n\nComo las bases son iguales ($5$), los exponentes deben ser iguales:\n$$2x = 3x + 3.$$ \nRestando $3x$ a ambos lados obtenemos $-x = 3$, por lo que $x = -3$.\n\nAsí, la única respuesta correcta es $-3$."};
+
 
   const handleTabChange = (tab) => {
     navigate('/dashboard', { state: { activeTab: tab } });
@@ -36,7 +56,30 @@ const fetchMaterias = async () => {
     }catch(error){
         console.log(error);
     }
+}
 
+const getIAQuestion = async () => {
+  const materia = materias.find(m => m.id === parseInt(selectedMateria)).nombre;
+  const tema = temas.find(t => t.id === parseInt(selectedTema)).nombre;
+  const datos = {
+    subject: materia,
+    topic: tema,
+    level: level
+  }
+
+  console.log(JSON.stringify(datos));
+  try{
+    const response = await fetch(`http://localhost:5000/api/ia/generate`, {
+      method: 'POST',
+      headers: {"Content-Type": 'application/json'},
+      body: JSON.stringify(datos)
+    });
+    const data = await response.json();
+    setPreguntaGenerada(data);
+
+  }catch(error){
+    console.log(error);
+  }
 }
 
 
@@ -45,7 +88,7 @@ const fetchMaterias = async () => {
     navigate('/');
   };
 
-//   useEffect (() => {fetchMaterias()}, []);
+  useEffect (() => {fetchMaterias()}, []);
   return (
     <div className="dashboard-layout">
       <Sidebar
@@ -66,7 +109,7 @@ const fetchMaterias = async () => {
           <div className="left-panel">
 
             <div className="card">
-              <h2>⚙️ Configuración de IA</h2>
+              <h2>Configuración de IA</h2>
 
               <label>MATERIA</label>
               <select 
@@ -74,20 +117,33 @@ const fetchMaterias = async () => {
               onChange={(e) => {
                 const materiaId = e.target.value;
                 setSelectedMateria(materiaId);
-                fetchTopics(materiaId);
+                if (materiaId){
+                fetchTopics(materiaId);}
                 }}>
-                    <option value="">
+                  <option value="">
                         Selecciona una materia
                     </option>
-            {materias.map((materia) => (
+                  
+                  {materias.map((materia) => (
                 <option key={materia.id} value={materia.id} >
                     {materia.nombre}</option>
                 ))}
                 </select>
 
               <label>TEMA ESPECÍFICO</label>
-              <select>
-                <option>Seleccione tema</option>
+              <select
+              value={selectedTema}
+              onChange={(e)=> {
+                const temaId = e.target.value;
+                setSelectedTema(temaId);
+              }}>
+                <option value="">Seleccione tema</option>
+
+                {temas.map((tema) => (
+                  <option key = {tema.id} value = {tema.id} >
+                    {tema.nombre}
+                  </option>
+                ))}
               </select>
 
               <label>NIVEL DE COMPLEJIDAD</label>
@@ -104,15 +160,28 @@ const fetchMaterias = async () => {
                 ))}
               </div>
 
-              <button className="generate-btn">
-                ✨ Generar Pregunta con IA
+              <button className="generate-btn"
+               onClick={() => {
+              //   if (selectedTema && selectedMateria){
+              //   getIAQuestion()
+              //   setEstadoTitulo("Pregunta Generada")
+              // }
+              setEstadoTitulo("Pregunta Generada")
+              setPreguntaGenerada(hardcodeinfo.pregunta)  
+              setExplicacionGenerada(hardcodeinfo.explicacion)
+              setOpcionesGeneradas(hardcodeinfo.opciones)
+              setRespuestaGenerada(hardcodeinfo.respuesta_correcta)
+            
+            }}
+              >
+                Generar Pregunta con IA
               </button>
             </div>
 
             {/* HISTORIAL */}
             <div className="card">
               <div className="history-header">
-                <h2>🕘 Historial</h2>
+                <h2> Historial</h2>
                 <span>Ver todo</span>
               </div>
 
@@ -135,23 +204,37 @@ const fetchMaterias = async () => {
 
           {/* RIGHT PANEL */}
           <div className="preview-panel">
-            <div className="preview-header">
+            { !preguntaGenerada ? (
+              <>
+              <div className="preview-header">
               <div>
-                <h2>👁️ Vista Previa</h2>
+                <h2>Vista Previa</h2>
                 <p>El contenido generado aparecerá aquí</p>
               </div>
             </div>
 
             <div className="preview-content">
-              <div className="robot">🤖</div>
-
-              <h2>Listo para Generar</h2>
+              <h2>{estadoTitulo}</h2>
 
               <p>
-                Ajusta los parámetros a la izquierda y haz clic
-                en el botón para generar contenido.
+                Ajusta los parámetros a la izquierda y haz clic en el botón para generar contenido.
               </p>
             </div>
+              </>
+              
+            ) : ( 
+              <>
+              <div className="preview-content">
+              <h2>{estadoTitulo}</h2>
+              <div className='question-card'>
+                <small>Pregunta: </small>
+                <p>{preguntaGenerada} </p>
+
+              </div>
+            </div>
+              </>
+            ) }
+            
           </div>
 
         </div>
@@ -163,6 +246,18 @@ const fetchMaterias = async () => {
           min-height:100vh;
           background:#f5f3fb;
           font-family:'Segoe UI', sans-serif;
+        }
+        
+        .question-card{
+          background:#f8f6fd;
+          padding:14px;
+          border-radius:14px;
+          margin-top:14px;
+        }
+        
+        .question-card small{
+          color:#7c59b0;
+          font-weight:700;
         }
 
         .main-content{
