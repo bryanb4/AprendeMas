@@ -1,94 +1,159 @@
-import React, { useState, useEffect} from 'react';
-import { data, useNavigate } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
+import React, { useState, useEffect } from "react";
+import { data, useNavigate } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
+import { BlockMath } from "react-katex";
+import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 function QuestionGenerate() {
   const navigate = useNavigate();
 
-  const [level, setLevel] = useState('Básico');
+  const [level, setLevel] = useState("Básico");
   const [materias, setMaterias] = useState([]);
   const [temas, setTemas] = useState([]);
-  const [selectedMateria, setSelectedMateria] = useState('');
-  const [selectedTema, setSelectedTema] = useState('');
-  const [preguntaGenerada, setPreguntaGenerada] = useState('');
-  const [estadoTitulo, setEstadoTitulo] = useState('Listo para Generar');
-
+  const [selectedMateria, setSelectedMateria] = useState("");
+  const [selectedTema, setSelectedTema] = useState("");
+  const [preguntaGenerada, setPreguntaGenerada] = useState("");
+  const [pregunta, setPregunta] = useState("");
+  const [estadoTitulo, setEstadoTitulo] = useState("Listo para Generar");
   const [opcionesGeneradas, setOpcionesGeneradas] = useState([]);
-  const [respuestaGenerada, setRespuestaGenerada] = useState('');
-  const [explicacionGenerada, setExplicacionGenerada] = useState('');
+  const [respuestaGenerada, setRespuestaGenerada] = useState("");
+  const [explicacionGenerada, setExplicacionGenerada] = useState("");
+  const [temaGenerado, setTemaGenerado] = useState("");
+  const [materiaGenerada, setMateriaGenerada] = useState("");
 
-  const hardcodeinfo = {materia_solicitada: "Matematicas",
-    tema_solicitado: "Exponentes",
-    nivel_solicitado: "Avanzado",
-    pregunta: "Si $ (5^{2})^{x} = 125^{x+1}$, ¿cuál es el valor de $x$?",
-    opciones: [
-        "-3",
-        "-2",
-        "3",
-        "0"
-    ],
-    respuesta_correcta: "-3",
-    explicacion: "Primero expresamos ambos lados con la misma base. \n\n- Lado izquierdo: $ (5^{2})^{x}=5^{2x}$.\n- Lado derecho: $125^{x+1}= (5^{3})^{x+1}=5^{3(x+1)}=5^{3x+3}$.\n\nComo las bases son iguales ($5$), los exponentes deben ser iguales:\n$$2x = 3x + 3.$$ \nRestando $3x$ a ambos lados obtenemos $-x = 3$, por lo que $x = -3$.\n\nAsí, la única respuesta correcta es $-3$."};
-
+  // const preguntaGenerada = {
+  //   materia_solicitada: "Matematicas",
+  //   tema_solicitado: "Exponentes",
+  //   nivel_solicitado: "Avanzado",
+  //   pregunta: "Si $ (5^{2})^{x} = 125^{x+1}$, ¿cuál es el valor de $x$?",
+  //   opciones: ["-3", "-2", "3", "0"],
+  //   respuesta_correcta: "-3",
+  //   explicacion:
+  //     "Primero expresamos ambos lados con la misma base. \n\n- Lado izquierdo: $ (5^{2})^{x}=5^{2x}$.\n- Lado derecho: $125^{x+1}= (5^{3})^{x+1}=5^{3(x+1)}=5^{3x+3}$.\n\nComo las bases son iguales ($5$), los exponentes deben ser iguales:\n$$2x = 3x + 3.$$ \nRestando $3x$ a ambos lados obtenemos $-x = 3$, por lo que $x = -3$.\n\nAsí, la única respuesta correcta es $-3$.",
+  // };
 
   const handleTabChange = (tab) => {
-    navigate('/dashboard', { state: { activeTab: tab } });
+    navigate("/dashboard", { state: { activeTab: tab } });
   };
 
   const fetchTopics = async (materiaId) => {
-  try {
-    const response = await fetch(
-         `http://localhost:5000/api/auth/materias/${materiaId}/temas`
-        );
-    const data = await response.json();
-    setTemas(data);
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/auth/materias/${materiaId}/temas`,
+      );
+      const data = await response.json();
+      setTemas(data);
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
-};
+  };
 
-const fetchMaterias = async () => {
-    try{
-        const response = await fetch (`http://localhost:5000/api/auth/materias`);
-        const data = await response.json();
-        setMaterias(data);
-        
-    }catch(error){
-        console.log(error);
+  const fetchMaterias = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/auth/materias`);
+      const data = await response.json();
+      setMaterias(data);
+    } catch (error) {
+      console.log(error);
     }
-}
+  };
 
-const getIAQuestion = async () => {
-  const materia = materias.find(m => m.id === parseInt(selectedMateria)).nombre;
-  const tema = temas.find(t => t.id === parseInt(selectedTema)).nombre;
-  const datos = {
-    subject: materia,
-    topic: tema,
-    level: level
+  const getIAQuestion = async () => {
+    const materia = materias.find(
+      (m) => m.id === parseInt(selectedMateria),
+    ).nombre;
+    const tema = temas.find((t) => t.id === parseInt(selectedTema)).nombre;
+    const datos = {
+      subject: materia,
+      topic: tema,
+      level: level,
+    };
+
+    console.log(JSON.stringify(datos));
+    try {
+      const response = await fetch(`http://localhost:5000/api/ia/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos),
+      });
+      const data = await response.json();
+      setPreguntaGenerada(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const sendQuestion = async () => {
+      const nivel = {
+      Basico: 400,
+      Medio: 800,
+      Avanzado: 1200
+    };
+    const datos = {
+      materia_solicitada: materias.find((m) => m.nombre === preguntaGenerada.materia_solicitada).id,
+      tema_solicitado: temas.find((t) => t.nombre === preguntaGenerada.tema_solicitado).id,
+      nivel_solicitado: nivel[preguntaGenerada.nivel_solicitado] ,
+      status: "arppoved",
+      pregunta: preguntaGenerada.pregunta,
+      opciones: preguntaGenerada.opciones,
+      respuesta_correcta: preguntaGenerada.respuesta_correcta,
+      explicacion: preguntaGenerada.explicacion,
+    };
+    
+    try {
+      const response = await fetch(`http://localhost:5000/api/ia/guardarPregunta`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos),
+      });
+      const result = await response.json();
+      
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  console.log(JSON.stringify(datos));
-  try{
-    const response = await fetch(`http://localhost:5000/api/ia/generate`, {
-      method: 'POST',
-      headers: {"Content-Type": 'application/json'},
-      body: JSON.stringify(datos)
-    });
-    const data = await response.json();
-    setPreguntaGenerada(data);
-
-  }catch(error){
-    console.log(error);
+  const sendQuestionPending = async () => {
+      const nivel = {
+      Basico: 400,
+      Medio: 800,
+      Avanzado: 1200
+    };
+    const datos = {
+      materia_solicitada: materias.find((m) => m.nombre === preguntaGenerada.materia_solicitada).id,
+      tema_solicitado: temas.find((t) => t.nombre === preguntaGenerada.tema_solicitado).id,
+      nivel_solicitado: nivel[preguntaGenerada.nivel_solicitado] ,
+      status: "pending_review",
+      pregunta: preguntaGenerada.pregunta,
+      opciones: preguntaGenerada.opciones,
+      respuesta_correcta: preguntaGenerada.respuesta_correcta,
+      explicacion: preguntaGenerada.explicacion,
+    };
+    
+    try {
+      const response = await fetch(`http://localhost:5000/api/ia/guardarPregunta`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos),
+      });
+      const result = await response.json();
+      
+    } catch (error) {
+      console.log(error);
+    }
   }
-}
 
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
-  useEffect (() => {fetchMaterias()}, []);
+  useEffect(() => {
+    fetchMaterias();
+  }, []);
   return (
     <div className="dashboard-layout">
       <Sidebar
@@ -99,48 +164,50 @@ const getIAQuestion = async () => {
 
       <main className="main-content">
         <div className="header">
-          <h1>Admin Evaluation</h1>
+          <h1>Panel de Administracion </h1>
           <span>Generación de Preguntas</span>
         </div>
 
         <div className="content-grid">
-
           {/* LEFT PANEL */}
           <div className="left-panel">
-
             <div className="card">
               <h2>Configuración de IA</h2>
 
               <label>MATERIA</label>
-              <select 
-              value={selectedMateria} 
-              onChange={(e) => {
-                const materiaId = e.target.value;
-                setSelectedMateria(materiaId);
-                if (materiaId){
-                fetchTopics(materiaId);}
-                }}>
-                  <option value="">
-                        Selecciona una materia
-                    </option>
-                  
-                  {materias.map((materia) => (
-                <option key={materia.id} value={materia.id} >
-                    {materia.nombre}</option>
+              <select
+                value={selectedMateria}
+                onChange={(e) => {
+                  const materiaId = e.target.value;
+                  setSelectedMateria(materiaId);
+                  if (materiaId) {
+                    fetchTopics(materiaId);
+                    
+    console.log(materias);
+                  }
+                }}
+              >
+                <option value="">Selecciona una materia</option>
+
+                {materias.map((materia) => (
+                  <option key={materia.id} value={materia.id}>
+                    {materia.nombre}
+                  </option>
                 ))}
-                </select>
+              </select>
 
               <label>TEMA ESPECÍFICO</label>
               <select
-              value={selectedTema}
-              onChange={(e)=> {
-                const temaId = e.target.value;
-                setSelectedTema(temaId);
-              }}>
+                value={selectedTema}
+                onChange={(e) => {
+                  const temaId = e.target.value;
+                  setSelectedTema(temaId);
+                }}
+              >
                 <option value="">Seleccione tema</option>
 
                 {temas.map((tema) => (
-                  <option key = {tema.id} value = {tema.id} >
+                  <option key={tema.id} value={tema.id}>
                     {tema.nombre}
                   </option>
                 ))}
@@ -149,10 +216,10 @@ const getIAQuestion = async () => {
               <label>NIVEL DE COMPLEJIDAD</label>
 
               <div className="level-buttons">
-                {['Básico', 'Medio', 'Avanzado'].map((item) => (
+                {["Basico", "Medio", "Avanzado"].map((item) => (
                   <button
                     key={item}
-                    className={level === item ? 'active' : ''}
+                    className={level === item ? "active" : ""}
                     onClick={() => setLevel(item)}
                   >
                     {item}
@@ -160,19 +227,14 @@ const getIAQuestion = async () => {
                 ))}
               </div>
 
-              <button className="generate-btn"
-               onClick={() => {
-              //   if (selectedTema && selectedMateria){
-              //   getIAQuestion()
-              //   setEstadoTitulo("Pregunta Generada")
-              // }
-              setEstadoTitulo("Pregunta Generada")
-              setPreguntaGenerada(hardcodeinfo.pregunta)  
-              setExplicacionGenerada(hardcodeinfo.explicacion)
-              setOpcionesGeneradas(hardcodeinfo.opciones)
-              setRespuestaGenerada(hardcodeinfo.respuesta_correcta)
-            
-            }}
+              <button
+                className="generate-btn"
+                onClick={() => {
+                    if (selectedTema && selectedMateria){
+                    getIAQuestion()
+                  }
+                }}
+                
               >
                 Generar Pregunta con IA
               </button>
@@ -203,44 +265,137 @@ const getIAQuestion = async () => {
           </div>
 
           {/* RIGHT PANEL */}
-          <div className="preview-panel">
-            { !preguntaGenerada ? (
+          <div className="card">
+            {!preguntaGenerada ? (
               <>
-              <div className="preview-header">
-              <div>
-                <h2>Vista Previa</h2>
-                <p>El contenido generado aparecerá aquí</p>
-              </div>
-            </div>
+                <div className="preview-header">
+                  <div>
+                    <h2>Vista Previa</h2>
+                    <p>El contenido generado aparecerá aquí</p>
+                  </div>
+                </div>
 
-            <div className="preview-content">
-              <h2>{estadoTitulo}</h2>
+                <div className="preview-content">
+                  <h2>{estadoTitulo}</h2>
 
-              <p>
-                Ajusta los parámetros a la izquierda y haz clic en el botón para generar contenido.
-              </p>
-            </div>
+                  <p>
+                    Ajusta los parámetros a la izquierda y haz clic en el botón
+                    para generar contenido.
+                  </p>
+                </div>
               </>
-              
-            ) : ( 
+            ) : (
               <>
-              <div className="preview-content">
-              <h2>{estadoTitulo}</h2>
-              <div className='question-card'>
-                <small>Pregunta: </small>
-                <p>{preguntaGenerada} </p>
+                <div className="preview-header">
+                  <div>
+                    <h2>Vista Previa</h2>
+                    <p>El contenido generado aparecerá aquí</p>
+                  </div>
+                </div>
+                <div className="preview-content">
+                  <h2>{estadoTitulo}</h2>
+                  <div className="header">
+                    <small>Pregunta: </small>
 
-              </div>
-            </div>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkMath]}
+                      rehypePlugins={[rehypeKatex]}
+                    >
+                      {preguntaGenerada.pregunta}
+                    </ReactMarkdown>
+                  </div>
+                  <div className="question-card2 " style={{ background: "#6D3FD1" }}>
+                    <small>Explicacion: </small>
+                    <div className="option-card">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkMath]}
+                        rehypePlugins={[rehypeKatex]}
+                      >
+                        {preguntaGenerada.explicacion}
+                      </ReactMarkdown>
+                    </div>
+                    <div className="question-card">
+                      <small>Opciones: </small>
+                      {preguntaGenerada.opciones.map((opcion) => (
+                        <div className="option-card" key={opcion}>
+                          <p>{opcion}</p>
+                        </div>
+                      ))}
+                      <div className="preview-header">
+                        <small>Resupuesta Correcta</small>
+                        <ReactMarkdown
+                          remarkPlugins={[remarkMath]}
+                          rehypePlugins={[rehypeKatex]}
+                        >
+                          {preguntaGenerada.respuesta_correcta}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="content-grid-buttons">
+                  <div className="">
+                    <button className="boton-aprobar"
+                    onClick={sendQuestion}
+                    >Aprobar y Guardar</button>
+                  </div>
+                  <div className="">
+                    <button className="boton-aprobar boton-marcar
+                    "
+                    onClick={sendQuestionPending}>Marcar para revision</button>
+                  </div>
+                </div>
               </>
-            ) }
-            
+            )}
           </div>
-
         </div>
       </main>
 
       <style>{`
+
+        .boton-aprobar{
+          width:100%;
+          padding:16px;
+          border:none;
+          border-radius:14px;
+          background: #FFFFFF;
+          color: #6D3FD1;
+          font-size:1rem;
+          font-weight:700;
+          cursor:pointer;
+        }
+          
+          .boton-aprobar:hover{
+          background:#7C3AED;
+          color: white;
+        }
+
+        .boton-marcar{
+          background: #c0b4e9;
+          color: #5B21B6;
+        }
+
+        .boton-marcar:hover{
+          background: #8B5CF6;
+          color: white;
+        }
+
+        .content-grid-buttons{
+          background: #6D3FD1;
+          display:grid;
+          grid-template-columns: 1fr 1fr; 
+          border-radius:14px;
+          padding: 20px;
+          gap:10px;
+        }
+
+        .columna-botones{
+          background: black;
+          min-height:100vh;
+          font-family:'Segoe UI', sans-serif;
+        }
+
+      
         .dashboard-layout{
           display:flex;
           min-height:100vh;
@@ -253,6 +408,22 @@ const getIAQuestion = async () => {
           padding:14px;
           border-radius:14px;
           margin-top:14px;
+        }
+
+        .question-card2{
+          background:#f8f6fd;
+          padding:14px;
+          border-radius:14px;
+          margin-top:14px;
+        }
+          .question-card2 small{
+          color:white;
+          font-weight:700;
+        }
+
+        .option-card{
+          background: white;
+          border-radius:14px;
         }
         
         .question-card small{
@@ -269,7 +440,7 @@ const getIAQuestion = async () => {
           display:flex;
           align-items:center;
           gap:10px;
-          margin-bottom:30px;
+          margin-bottom:15px;
         }
 
         .header h1{
@@ -285,7 +456,7 @@ const getIAQuestion = async () => {
 
         .content-grid{
           display:grid;
-          grid-template-columns:350px 1fr;
+          grid-template-columns: 1fr 1fr ;
           gap:24px;
         }
 
@@ -362,14 +533,16 @@ const getIAQuestion = async () => {
         }
 
         .preview-panel{
-          background:white;
           border-radius:20px;
+          display:flex;
+          flex-direction: column;
           overflow:hidden;
-          box-shadow:0 4px 20px rgba(0,0,0,0.05);
         }
 
         .preview-header{
-          padding:24px;
+          background: white;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+          padding:20px;
           border-bottom:1px solid #eee;
         }
 
@@ -384,13 +557,14 @@ const getIAQuestion = async () => {
         }
 
         .preview-content{
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+          background: white;
           display:flex;
           flex-direction:column;
           align-items:center;
           justify-content:center;
-          height:600px;
           text-align:center;
-          padding:40px;
+          padding:10px;
         }
 
         .robot{
