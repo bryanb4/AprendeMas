@@ -17,17 +17,6 @@ function QuestionGenerate() {
   const [preguntaGenerada, setPreguntaGenerada] = useState("");
   const [estadoTitulo, setEstadoTitulo] = useState("Listo para Generar");
 
-  // const preguntaGenerada = {
-  //   materia_solicitada: "Matematicas",
-  //   tema_solicitado: "Exponentes",
-  //   nivel_solicitado: "Avanzado",
-  //   pregunta: "Si $ (5^{2})^{x} = 125^{x+1}$, ¿cuál es el valor de $x$?",
-  //   opciones: ["-3", "-2", "3", "0"],
-  //   respuesta_correcta: "-3",
-  //   explicacion:
-  //     "Primero expresamos ambos lados con la misma base. \n\n- Lado izquierdo: $ (5^{2})^{x}=5^{2x}$.\n- Lado derecho: $125^{x+1}= (5^{3})^{x+1}=5^{3(x+1)}=5^{3x+3}$.\n\nComo las bases son iguales ($5$), los exponentes deben ser iguales:\n$$2x = 3x + 3.$$ \nRestando $3x$ a ambos lados obtenemos $-x = 3$, por lo que $x = -3$.\n\nAsí, la única respuesta correcta es $-3$.",
-  // };
-
   const handleTabChange = (tab) => {
     navigate("/dashboard", { state: { activeTab: tab } });
   };
@@ -80,65 +69,76 @@ function QuestionGenerate() {
   };
 
   const sendQuestion = async () => {
-      const nivel = {
+    const nivel = {
       Basico: 400,
       Medio: 800,
-      Avanzado: 1200
+      Avanzado: 1200,
     };
     const datos = {
-      materia_solicitada: materias.find((m) => m.nombre === preguntaGenerada.materia_solicitada).id,
-      tema_solicitado: temas.find((t) => t.nombre === preguntaGenerada.tema_solicitado).id,
-      nivel_solicitado: nivel[preguntaGenerada.nivel_solicitado] ,
+      materia_solicitada: materias.find(
+        (m) => m.nombre === preguntaGenerada.materia_solicitada,
+      ).id,
+      tema_solicitado: temas.find(
+        (t) => t.nombre === preguntaGenerada.tema_solicitado,
+      ).id,
+      nivel_solicitado: nivel[preguntaGenerada.nivel_solicitado],
       status: "arppoved",
       pregunta: preguntaGenerada.pregunta,
       opciones: preguntaGenerada.opciones,
       respuesta_correcta: preguntaGenerada.respuesta_correcta,
       explicacion: preguntaGenerada.explicacion,
     };
-    
+
     try {
-      const response = await fetch(`http://localhost:5000/api/ia/guardarPregunta`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datos),
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/ia/guardarPregunta`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datos),
+        },
+      );
       const result = await response.json();
-      
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const sendQuestionPending = async () => {
-      const nivel = {
+    const nivel = {
       Basico: 400,
       Medio: 800,
-      Avanzado: 1200
+      Avanzado: 1200,
     };
     const datos = {
-      materia_solicitada: materias.find((m) => m.nombre === preguntaGenerada.materia_solicitada).id,
-      tema_solicitado: temas.find((t) => t.nombre === preguntaGenerada.tema_solicitado).id,
-      nivel_solicitado: nivel[preguntaGenerada.nivel_solicitado] ,
+      materia_solicitada: materias.find(
+        (m) => m.nombre === preguntaGenerada.materia_solicitada,
+      ).id,
+      tema_solicitado: temas.find(
+        (t) => t.nombre === preguntaGenerada.tema_solicitado,
+      ).id,
+      nivel_solicitado: nivel[preguntaGenerada.nivel_solicitado],
       status: "pending_review",
       pregunta: preguntaGenerada.pregunta,
       opciones: preguntaGenerada.opciones,
       respuesta_correcta: preguntaGenerada.respuesta_correcta,
       explicacion: preguntaGenerada.explicacion,
     };
-    
+
     try {
-      const response = await fetch(`http://localhost:5000/api/ia/guardarPregunta`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datos),
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/ia/guardarPregunta`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datos),
+        },
+      );
       const result = await response.json();
-      
     } catch (error) {
       console.log(error);
     }
-  }
-
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -176,8 +176,8 @@ function QuestionGenerate() {
                   setSelectedMateria(materiaId);
                   if (materiaId) {
                     fetchTopics(materiaId);
-                    
-    console.log(materias);
+
+                    console.log(materias);
                   }
                 }}
               >
@@ -224,11 +224,10 @@ function QuestionGenerate() {
               <button
                 className="generate-btn"
                 onClick={() => {
-                    if (selectedTema && selectedMateria){
-                    getIAQuestion()
+                  if (selectedTema && selectedMateria) {
+                    getIAQuestion();
                   }
                 }}
-                
               >
                 Generar Pregunta con IA
               </button>
@@ -270,7 +269,7 @@ function QuestionGenerate() {
                 </div>
 
                 <div className="preview-content">
-                  <h2>{estadoTitulo}</h2>
+                  <h2> Listo para Generar</h2>
 
                   <p>
                     Ajusta los parámetros a la izquierda y haz clic en el botón
@@ -281,13 +280,36 @@ function QuestionGenerate() {
             ) : (
               <>
                 <div className="preview-header">
-                  <div>
-                    <h2>Vista Previa</h2>
-                    <p>El contenido generado aparecerá aquí</p>
+                  <div className="grid-dosElementos">
+                    <div>
+                      <h2>Vista Previa</h2>
+                      <p>El contenido generado aparecerá aquí</p>
+                    </div>
+                    <button className="boton-eliminar"
+                    onClick={()=>setPreguntaGenerada('')}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-trash-icon lucide-trash"
+                      >
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                        <path d="M3 6h18" />
+                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
+
                 <div className="preview-content">
-                  <h2>{estadoTitulo}</h2>
+                  <h2>Pregunta Generada</h2>
                   <div className="header">
                     <small>Pregunta: </small>
 
@@ -298,7 +320,10 @@ function QuestionGenerate() {
                       {preguntaGenerada.pregunta}
                     </ReactMarkdown>
                   </div>
-                  <div className="question-card2 " style={{ background: "#6D3FD1" }}>
+                  <div
+                    className="question-card2 "
+                    style={{ background: "#6D3FD1" }}
+                  >
                     <small>Explicacion: </small>
                     <div className="option-card">
                       <ReactMarkdown
@@ -315,7 +340,7 @@ function QuestionGenerate() {
                           <p>{opcion}</p>
                         </div>
                       ))}
-                      <div className="preview-header">
+                      <div className="preview-respuesta">
                         <small>Resupuesta Correcta</small>
                         <ReactMarkdown
                           remarkPlugins={[remarkMath]}
@@ -329,14 +354,18 @@ function QuestionGenerate() {
                 </div>
                 <div className="content-grid-buttons">
                   <div className="">
-                    <button className="boton-aprobar"
-                    onClick={sendQuestion}
-                    >Aprobar y Guardar</button>
+                    <button className="boton-aprobar" onClick={sendQuestion}>
+                      Aprobar y Guardar
+                    </button>
                   </div>
                   <div className="">
-                    <button className="boton-aprobar boton-marcar
+                    <button
+                      className="boton-aprobar boton-marcar
                     "
-                    onClick={sendQuestionPending}>Marcar para revision</button>
+                      onClick={sendQuestionPending}
+                    >
+                      Marcar para revision
+                    </button>
                   </div>
                 </div>
               </>
@@ -346,6 +375,26 @@ function QuestionGenerate() {
       </main>
 
       <style>{`
+
+        .boton-eliminar{
+          justify-self: end;
+          border-radius:10px;
+          background: #e03939ce;
+          cursor:pointer;
+        }
+
+        .grid-dosElementos{
+          display:grid;
+          grid-template-columns: 1fr auto ;
+          gap:24px;
+        }
+        
+
+        .preview-respuesta{
+          background: white;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+          border-bottom:1px solid #eee;
+        }
 
         .boton-aprobar{
           width:100%;
@@ -572,7 +621,7 @@ function QuestionGenerate() {
 
         .preview-content p{
           color:#777;
-          max-width:400px;
+          padding: 15px;
           line-height:1.6;
         }
 
