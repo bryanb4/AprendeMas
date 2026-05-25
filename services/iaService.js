@@ -36,12 +36,14 @@ async function getAIResponse({ subject, topic, level }) {
           - Debe tener exactamente 4 opciones y solo una respuesta correcta.
           - Usa un lenguaje claro y adecuado para alumnos de secundaria.
           - Verifica que la respuesta correcta coincida perfectamente con la explicación y que no existan contradicciones.
-
+          
           REGLAS DE FORMATO MATEMÁTICO:
-          - Todas las expresiones, variables o números matemáticos deben usar sintaxis compatible con KaTeX.
-          - Usa $ ... $ para matemáticas inline (ejemplo: $x = 2$, $30\\%$).
-          - Usa $$ ... $$ para bloques matemáticos destacados.
-          - NO uses Markdown matemático alternativo. Escapa correctamente los caracteres de LaTeX (como la doble barra invertida \\\\ si es necesario).`
+          - Todas las expresiones matemáticas DEBEN ser compatibles con Markdown + KaTeX.
+          - Para expresiones inline usa: $ ... $
+          - Para bloques matemáticos usa: $$ ... $$
+          - NO uses \( \) ni \[ \].
+          - Usa sintaxis LaTeX válida dentro de $...$ o $$...$$.
+          - Escapa correctamente las barras invertidas en JSON.`
         }
       ],
       temperature: 0,
