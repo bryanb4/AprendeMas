@@ -16,9 +16,22 @@ function QuestionGenerate() {
   const [selectedTema, setSelectedTema] = useState("");
   const [preguntaGenerada, setPreguntaGenerada] = useState("");
   const [estadoTitulo, setEstadoTitulo] = useState("Listo para Generar");
+  const [primeras3preg, setPrimeras3preg] = useState([]);
 
   const handleTabChange = (tab) => {
     navigate("/dashboard", { state: { activeTab: tab } });
+  };
+
+  const fetch3Preg = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/ia/primerasPreguntas`,
+      );
+      const data = await response.json();
+      setPrimeras3preg(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const fetchTopics = async (materiaId) => {
@@ -62,6 +75,7 @@ function QuestionGenerate() {
         body: JSON.stringify(datos),
       });
       const data = await response.json();
+      console.log(data);
       setPreguntaGenerada(data);
     } catch (error) {
       console.log(error);
@@ -99,6 +113,7 @@ function QuestionGenerate() {
         },
       );
       const result = await response.json();
+      alert('Guardado correctamente');
     } catch (error) {
       console.log(error);
     }
@@ -135,6 +150,7 @@ function QuestionGenerate() {
         },
       );
       const result = await response.json();
+      alert('Guardado para revision correctamente');
     } catch (error) {
       console.log(error);
     }
@@ -147,6 +163,7 @@ function QuestionGenerate() {
 
   useEffect(() => {
     fetchMaterias();
+    fetch3Preg();
   }, []);
   return (
     <div className="dashboard-layout">
@@ -285,8 +302,9 @@ function QuestionGenerate() {
                       <h2>Vista Previa</h2>
                       <p>El contenido generado aparecerá aquí</p>
                     </div>
-                    <button className="boton-eliminar"
-                    onClick={()=>setPreguntaGenerada('')}
+                    <button
+                      className="boton-eliminar"
+                      onClick={() => setPreguntaGenerada(null)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -295,10 +313,10 @@ function QuestionGenerate() {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="lucide lucide-trash-icon lucide-trash"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-trash-icon lucide-trash"
                       >
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
                         <path d="M3 6h18" />
@@ -354,7 +372,13 @@ function QuestionGenerate() {
                 </div>
                 <div className="content-grid-buttons">
                   <div className="">
-                    <button className="boton-aprobar" onClick={sendQuestion}>
+                    <button
+                      className="boton-aprobar"
+                      onClick={() => {
+                        sendQuestion();
+                        setPreguntaGenerada(null);
+                      }}
+                    >
                       Aprobar y Guardar
                     </button>
                   </div>
@@ -362,7 +386,10 @@ function QuestionGenerate() {
                     <button
                       className="boton-aprobar boton-marcar
                     "
-                      onClick={sendQuestionPending}
+                      onClick={() => {
+                        sendQuestionPending();
+                        setPreguntaGenerada(null);
+                      }}
                     >
                       Marcar para revision
                     </button>
