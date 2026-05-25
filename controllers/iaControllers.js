@@ -49,16 +49,23 @@ const saveQuestion = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-
 };
 
 const primeras3Preguntas = async (req, res) => {
-    try {
-      const result = await pool.query("SELECT id, temas_id, materia_id FROM questions WHERE status = 'pending_review' LIMIT 3");
-      res.json(result.rows);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  };
+  try {
+    const result = await pool.query(`SELECT 
+            q.id,
+            q.temas_id,
+            q.materia_id,
+            t.nombre AS tema_nombre
+            FROM questions q
+            JOIN temas t ON q.temas_id = t.id
+            WHERE q.status = 'pending_review'
+            LIMIT 3;`);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-module.exports = { getResponse, saveQuestion, primeras3Preguntas};
+module.exports = { getResponse, saveQuestion, primeras3Preguntas };

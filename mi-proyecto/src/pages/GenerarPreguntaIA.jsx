@@ -113,7 +113,7 @@ function QuestionGenerate() {
         },
       );
       const result = await response.json();
-      alert('Guardado correctamente');
+      alert("Guardado correctamente");
     } catch (error) {
       console.log(error);
     }
@@ -150,7 +150,7 @@ function QuestionGenerate() {
         },
       );
       const result = await response.json();
-      alert('Guardado para revision correctamente');
+      alert("Guardado para revision correctamente");
     } catch (error) {
       console.log(error);
     }
@@ -253,24 +253,19 @@ function QuestionGenerate() {
             {/* HISTORIAL */}
             <div className="card">
               <div className="history-header">
-                <h2> Historial</h2>
-                <span>Ver todo</span>
+                <h2> Pendientes de revision</h2>
+                <span onClick={() => alert("XD")}>Ver todo</span>
               </div>
-
-              <div className="history-item">
-                <small>MATEMÁTICAS</small>
-                <p>Resolución de Fracciones mixtas...</p>
-              </div>
-
-              <div className="history-item">
-                <small>CIENCIAS</small>
-                <p>Ciclo del Agua y Condensación</p>
-              </div>
-
-              <div className="history-item">
-                <small>HISTORIA</small>
-                <p>Revolución Industrial...</p>
-              </div>
+              {!primeras3preg?.length ? (
+                <p>No hay preguntas</p>
+              ) : (
+                primeras3preg.map((pregunta) => (
+                  <div className="history-item" key={pregunta.id}>
+                    <small>ID pregunta: {pregunta.id}</small>
+                    <p>Tema: {pregunta.tema_nombre}</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
