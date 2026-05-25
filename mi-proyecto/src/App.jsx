@@ -1,5 +1,6 @@
 // src/App.jsx
 import React from 'react';
+import 'katex/dist/katex.min.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import HomePage from './pages/HomePage.jsx';
