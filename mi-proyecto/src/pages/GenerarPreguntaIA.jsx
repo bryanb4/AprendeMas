@@ -15,13 +15,7 @@ function QuestionGenerate() {
   const [selectedMateria, setSelectedMateria] = useState("");
   const [selectedTema, setSelectedTema] = useState("");
   const [preguntaGenerada, setPreguntaGenerada] = useState("");
-  const [pregunta, setPregunta] = useState("");
   const [estadoTitulo, setEstadoTitulo] = useState("Listo para Generar");
-  const [opcionesGeneradas, setOpcionesGeneradas] = useState([]);
-  const [respuestaGenerada, setRespuestaGenerada] = useState("");
-  const [explicacionGenerada, setExplicacionGenerada] = useState("");
-  const [temaGenerado, setTemaGenerado] = useState("");
-  const [materiaGenerada, setMateriaGenerada] = useState("");
 
   // const preguntaGenerada = {
   //   materia_solicitada: "Matematicas",
