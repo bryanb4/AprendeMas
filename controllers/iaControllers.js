@@ -1,46 +1,64 @@
-const { getAIResponse } = require('../services/iaService');
-const pool = require('../db/conexion');
+const { getAIResponse } = require("../services/iaService");
+const pool = require("../db/conexion");
 
 const getResponse = async (req, res) => {
-    try {
-        const { subject, topic, level } = req.body;
+  try {
+    const { subject, topic, level } = req.body;
 
-        const data = await getAIResponse({ subject, topic, level });
+    const data = await getAIResponse({ subject, topic, level });
 
-        res.json(data);
-    } catch (error) {
-        console.error('Error getting AI response: ', error);
-        res.status(500).json({ error: 'Error getting AI response' });
-    }
+    res.json(data);
+  } catch (error) {
+    console.error("Error getting AI response: ", error);
+    res.status(500).json({ error: "Error getting AI response" });
+  }
 };
 
 const saveQuestion = async (req, res) => {
-    try{
-        const {
-            materia_solicitada,
-            tema_solicitado,
-            nivel_solicitado,
-            status,
-            pregunta,
-            opciones,
-            respuesta_correcta,
-            explicacion
-            } = req.body;
+  try {
+    const {
+      materia_solicitada,
+      tema_solicitado,
+      nivel_solicitado,
+      status,
+      pregunta,
+      opciones,
+      respuesta_correcta,
+      explicacion,
+    } = req.body;
 
-        const newQuestion = await pool.query(
-            `
+    const newQuestion = await pool.query(
+      `
             INSERT INTO questions (materia_id, temas_id, content, options, correct_option, explanation, rating, status)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            `, [materia_solicitada, tema_solicitado, pregunta, JSON.stringify(opciones), respuesta_correcta, explicacion, nivel_solicitado, status]
-        )
-        return res.status(200).json({
-        message: "Pregunta registrada con exito"
-      });
-    }catch(error){
-        res.status(500).json ({error : error.message})
+            `,
+      [
+        materia_solicitada,
+        tema_solicitado,
+        pregunta,
+        JSON.stringify(opciones),
+        respuesta_correcta,
+        explicacion,
+        nivel_solicitado,
+        status,
+      ],
+    );
+    return res.status(200).json({
+      message: "Pregunta registrada con exito",
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+
+};
+
+const primeras3Preguntas = async (req, res) => {
+    try {
+      const result = await pool.query("SELECT id, temas_id, materia_id FROM questions WHERE status = 'pending_review' LIMIT 3");
+      res.json(result.rows);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-    
+  };
 
-
-}
-module.exports = { getResponse, saveQuestion};
+module.exports = { getResponse, saveQuestion, primeras3Preguntas};
