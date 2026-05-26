@@ -68,4 +68,21 @@ const primeras3Preguntas = async (req, res) => {
   }
 };
 
-module.exports = { getResponse, saveQuestion, primeras3Preguntas };
+const obtenerPreguntas = async (req, res) => {
+  try {
+    const result = await pool.query(
+    `SELECT 
+        q.*, 
+        t.nombre AS tema_nombre,
+        materias.nombre AS materia_nombre
+        FROM questions q
+        JOIN temas t ON q.temas_id = t.id
+        JOIN materias ON q.materia_id = materias.id
+        Order by status desc `)
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+module.exports = { getResponse, saveQuestion, primeras3Preguntas, obtenerPreguntas};
