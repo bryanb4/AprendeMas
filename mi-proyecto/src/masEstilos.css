@@ -1,0 +1,72 @@
+/* Estilos generales */
+.div-tabla {
+  background-color: rgb(255, 255, 255);
+  justify-self: center;
+  margin-top:20px;
+  padding: 10px;
+}
+
+.div-prueba{
+  border-radius: 1px;
+}
+.botoneditar{
+    background-color:#ffffff;
+    border-radius: 5px;
+}
+.botoneditar:hover{
+    background-color: #9f6cffce;
+    cursor: pointer;
+}
+
+.borde-estado {
+  border-radius: 18px;
+  padding: 7px;
+  color: white;
+}
+
+.clase-pending {
+  background-color: rgb(168, 12, 12);
+}
+
+.clase-aprobado {
+  background-color: rgb(12, 146, 52);
+}
+
+.tabla-preguntas {
+  border-spacing: 0px;
+  border-radius: 10px;
+  background-color: #5c1be9;
+  border-color: black;
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.color-idpregunta {
+  color: #5c1be9;
+}
+
+.alinea-izq {
+  text-align: left;
+  padding-left: 5%;
+}
+
+thead th {
+  color: white;
+  padding: 12px;
+  text-align: center;
+}
+
+tbody td {
+  padding: 10px;
+  text-align: center;
+}
+
+.hover-preguntas{
+    background-color: aliceblue;
+}
+/* Efecto hover */
+.hover-preguntas:hover {
+  background-color: #c0b4e9;
+  cursor: pointer;
+}
+
