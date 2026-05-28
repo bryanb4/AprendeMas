@@ -22,6 +22,11 @@ function QuestionGenerate() {
     navigate("/dashboard", { state: { activeTab: tab } });
   };
 
+  const iraTabla = () => {
+    // Navigate to a new page
+    navigate('/adminTabla');
+  };
+
   const fetch3Preg = async () => {
     try {
       const response = await fetch(
@@ -254,7 +259,7 @@ function QuestionGenerate() {
             <div className="card">
               <div className="history-header">
                 <h2> Pendientes de revision</h2>
-                <span onClick={() => alert("XD")}>Ver todo</span>
+                <span onClick={iraTabla}>Ver todo</span>
               </div>
               {!primeras3preg?.length ? (
                 <p>No hay preguntas</p>

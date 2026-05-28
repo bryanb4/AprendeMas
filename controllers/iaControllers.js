@@ -14,6 +14,42 @@ const getResponse = async (req, res) => {
   }
 };
 
+const editarPregunta = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = req.body;
+
+    const updQuestion = await pool.query(
+      `WITH updated_question AS (
+        UPDATE questions q
+        SET
+          content = $1,
+          explanation = $2,
+          options = $3,
+          status = 'approved'
+        WHERE q.id = $4
+        RETURNING *
+      )
+
+      SELECT 
+        updated_question.*,
+        temas.nombre AS tema_nombre,
+        materias.nombre AS materia_nombre
+      FROM updated_question
+      JOIN temas 
+        ON updated_question.temas_id = temas.id
+      JOIN materias 
+        ON updated_question.materia_id = materias.id;
+        `,
+        [data.content, data.explanation, JSON.stringify(data.options), id,],
+    );
+    return res.json(updQuestion.rows[0]);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const saveQuestion = async (req, res) => {
   try {
     const {
@@ -71,18 +107,25 @@ const primeras3Preguntas = async (req, res) => {
 const obtenerPreguntas = async (req, res) => {
   try {
     const result = await pool.query(
-    `SELECT 
+      `SELECT 
         q.*, 
         t.nombre AS tema_nombre,
         materias.nombre AS materia_nombre
         FROM questions q
         JOIN temas t ON q.temas_id = t.id
         JOIN materias ON q.materia_id = materias.id
-        Order by status desc `)
+        Order by status desc, created_at asc;`,
+    );
     res.json(result.rows);
   } catch (error) {
     console.error(error);
   }
 };
 
-module.exports = { getResponse, saveQuestion, primeras3Preguntas, obtenerPreguntas};
+module.exports = {
+  getResponse,
+  saveQuestion,
+  primeras3Preguntas,
+  obtenerPreguntas,
+  editarPregunta,
+};

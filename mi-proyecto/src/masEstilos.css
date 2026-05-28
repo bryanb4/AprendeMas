@@ -1,21 +1,148 @@
-/* Estilos generales */
+.elemento-menos-margen {
+  margin: 2px;
+}
+.divcontenedorTituloCerrar h2 {
+  margin: 0;
+}
+.contenedorTituloCerrar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+.botonGuardar{
+  border-radius: 9px;
+  background-color: #5c1be9;;
+  border-color: transparent;
+  color: rgb(235, 189, 253);
+  display: block;
+  margin: 0 auto;
+  margin-top: 20px;
+  padding: 10px;
+  cursor: pointer
+}
+
+.botonGuardar:hover{
+  border-color: white;
+  background-color:#31255f;
+  color: white;
+}
+
+.margenBoton {
+  justify-self: end;
+  align-self: start;
+  background-color: rgb(241, 120, 120);
+  cursor: pointer;
+}
+
+.auto {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.opciones {
+  background-color: #1b212d;
+  border: 1px solid white;
+  color: white;
+  border-radius: 10px;
+  margin: 1px;
+  padding: 10px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.elementos-flex {
+  display: flex;
+  gap: 10px;
+}
+
+.grid-tresRow {
+  display: grid;
+  grid-template-rows: auto auto auto auto auto;
+}
+
+.nombre-id {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+}
+
+.p-idpreguntasec {
+  margin: 0%;
+  width: 100%;
+  padding: 3px;
+  border: 1px solid #000000ce;
+  border-radius: 5px;
+  background-color: aliceblue;
+  color: black;
+}
+
+.alinear-centro {
+  text-align: center;
+}
+
+.texto-blanco {
+  color: white;
+  margin: 0;
+}
+
+.p-idpregunta {
+  width: fit-content;
+  padding: 10px;
+  border-radius: 30px;
+  background-color: #31255f;
+  color: white;
+  margin: 0px;
+}
+
+.card-editar {
+  background: white;
+  background-color: #1b212d;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(107, 17, 203, 0.452);
+  min-width: 0;
+}
+.modal {
+  background-color: #5c1be9;
+}
+
+.grid-dosElementos {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 24px;
+}
+.grid-dosElementosPreg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.grid-dosElementospeque {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: fit-content;
+  align-items: start;
+}
+
+.grid-dosElementosRow {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  place-items: center;
+}
+
 .div-tabla {
   background-color: rgb(255, 255, 255);
   justify-self: center;
-  margin-top:20px;
+  margin-top: 20px;
   padding: 10px;
 }
 
-.div-prueba{
-  border-radius: 1px;
+.botoneditar {
+  background-color: #ffffff;
+  border-radius: 5px;
 }
-.botoneditar{
-    background-color:#ffffff;
-    border-radius: 5px;
-}
-.botoneditar:hover{
-    background-color: #9f6cffce;
-    cursor: pointer;
+.botoneditar:hover {
+  background-color: #9f6cffce;
+  cursor: pointer;
 }
 
 .borde-estado {
@@ -24,12 +151,62 @@
   color: white;
 }
 
+.botonCerrar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+}
+.botonCerrar:hover{
+  border-color: white;
+}
+
+.icono-boton {
+  width: 20x;
+  height: 20px;
+  background-color: rgb(241, 120, 120);
+  padding: 0px;
+  justify-self: end;
+  align-self: start;
+}
+
 .clase-pending {
   background-color: rgb(168, 12, 12);
+  text-align: center;
+  width: fit-content;
+}
+.contenedor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .clase-aprobado {
   background-color: rgb(12, 146, 52);
+  text-align: center;
+  width: fit-content;
+}
+
+.cuadro-edicion {
+  background-color: #1b212d;
+  border: 1px solid white;
+  color: white;
+  border-radius: 10px;
+  margin: 10px;
+  height: 200px;
+  width: auto;
+}
+.cuadro-edicionOpc {
+  background-color: #1b212d;
+  border: 1px solid white;
+  color: white;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  width: 60px;
 }
 
 .tabla-preguntas {
@@ -42,7 +219,7 @@
 }
 
 .color-idpregunta {
-  color: #5c1be9;
+  color: #b099ee;
 }
 
 .alinea-izq {
@@ -61,12 +238,16 @@ tbody td {
   text-align: center;
 }
 
-.hover-preguntas{
-    background-color: aliceblue;
+.hover-preguntas {
+  background-color: aliceblue;
 }
 /* Efecto hover */
 .hover-preguntas:hover {
   background-color: #c0b4e9;
-  cursor: pointer;
 }
 
+@media (max-width: 7px) {
+  .grid-dosElementos {
+    grid-template-columns: 1fr;
+  }
+}
