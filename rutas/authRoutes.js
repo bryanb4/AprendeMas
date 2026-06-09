@@ -4,7 +4,6 @@ const router = express.Router();
 // Controllers
 const authController = require('../controllers/authController');
 const resultController = require('../controllers/resultController');
-const subjectController = require('../controllers/subjectController');
 const profileController = require('../controllers/profileController');
 
 // Middleware
@@ -14,13 +13,6 @@ const authMiddleware = require('../middleware/authMiddleware');
 // -------- AUTH --------
 router.post('/login', authController.login);
 router.post('/register', authController.register);
-
-
-// -------- MATERIAS --------
-router.get('/materias', subjectController.getSubjects);
-router.get('/materias/:id/temas', subjectController.getTopics);
-router.post('/materias', subjectController.setSubject);
-router.post('/temas', subjectController.setTopic);
 
 
 // -------- PERFIL --------
