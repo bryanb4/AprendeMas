@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { data, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { BlockMath } from "react-katex";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import { io } from "socket.io-client";
 
 function QuestionGenerate() {
   const navigate = useNavigate();
@@ -17,51 +18,26 @@ function QuestionGenerate() {
   const [preguntaGenerada, setPreguntaGenerada] = useState("");
   const [estadoTitulo, setEstadoTitulo] = useState("Listo para Generar");
   const [primeras3preg, setPrimeras3preg] = useState([]);
+  const [socketConnected, setSocketConnected] = useState(false);
 
-  const handleTabChange = (tab) => {
-    navigate("/dashboard", { state: { activeTab: tab } });
-  };
+  const master = useRef(null);
 
-  const iraTabla = () => {
-    // Navigate to a new page
-    navigate('/adminTabla');
-  };
+  useEffect(() => {
+    master.current = io("http://localhost:3001");
 
-  const fetch3Preg = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/ia/primerasPreguntas`,
-      );
-      const data = await response.json();
-      setPrimeras3preg(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    master.current.on("connect", () => setSocketConnected(true));
+    master.current.on("disconnect", () => setSocketConnected(false));
 
-  const fetchTopics = async (materiaId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/auth/materias/${materiaId}/temas`,
-      );
-      const data = await response.json();
-      setTemas(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    master.current.emit("registro", { rol: "front-admin" });
 
-  const fetchMaterias = async () => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/auth/materias`);
-      const data = await response.json();
-      setMaterias(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    return () => {
+      master.current.off("connect");
+      master.current.off("disconnect");
+      master.current.disconnect();
+    };
+  }, []);
 
-  const getIAQuestion = async () => {
+  const enviarOrdenGenPregunta = () => {
     const materia = materias.find(
       (m) => m.id === parseInt(selectedMateria),
     ).nombre;
@@ -71,20 +47,32 @@ function QuestionGenerate() {
       topic: tema,
       level: level,
     };
+    master.current.emit("GenerarPregunta", datos);
+  };
 
-    console.log(JSON.stringify(datos));
-    try {
-      const response = await fetch(`http://localhost:5000/api/ia/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datos),
-      });
-      const data = await response.json();
+  const handleTabChange = (tab) => {
+    navigate("/dashboard", { state: { activeTab: tab } });
+  };
+
+  const iraTabla = () => {
+    navigate("/adminTabla");
+  };
+
+  const fetch3Preg = async () => {
+    master.current.emit("obtener3BD");
+    master.current.on("3pregObtenidas", (data) => {
+      setPrimeras3preg(data);
       console.log(data);
-      setPreguntaGenerada(data);
-    } catch (error) {
-      console.log(error);
-    }
+    });
+    console.log("Enviado");
+  };
+
+  const fetchTopics = async (materiaId) => {
+    master.current.emit("obtenerTemasBD", materiaId);
+  };
+
+  const fetchMaterias = async () => {
+    master.current.emit("obtenerMateriasBD");
   };
 
   const sendQuestion = async () => {
@@ -108,20 +96,7 @@ function QuestionGenerate() {
       explicacion: preguntaGenerada.explicacion,
     };
 
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/ia/guardarPregunta`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(datos),
-        },
-      );
-      const result = await response.json();
-      alert("Guardado correctamente");
-    } catch (error) {
-      console.log(error);
-    }
+    master.current.emit("guardarPreguntaBD", datos);
   };
 
   const sendQuestionPending = async () => {
@@ -145,20 +120,7 @@ function QuestionGenerate() {
       explicacion: preguntaGenerada.explicacion,
     };
 
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/ia/guardarPregunta`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(datos),
-        },
-      );
-      const result = await response.json();
-      alert("Guardado para revision correctamente");
-    } catch (error) {
-      console.log(error);
-    }
+    master.current.emit("guardarPreguntaBD", datos);
   };
 
   const handleLogout = () => {
@@ -169,6 +131,24 @@ function QuestionGenerate() {
   useEffect(() => {
     fetchMaterias();
     fetch3Preg();
+    master.current.on("preguntaGenerada", (data) => {
+      console.log("Pregunta recibida");
+
+      setPreguntaGenerada(data);
+    });
+
+    master.current.on("materiasObtenidasBD", (data) => {
+      setMaterias(data);
+    });
+
+    master.current.on("temasObtenidosBD", (data) => {
+      setTemas(data);
+    });
+
+    return () => {
+      master.current.off("preguntaGenerada");
+      master.current.off("materiasObtenidasBD");
+    };
   }, []);
   return (
     <div className="dashboard-layout">
@@ -247,7 +227,7 @@ function QuestionGenerate() {
                 className="generate-btn"
                 onClick={() => {
                   if (selectedTema && selectedMateria) {
-                    getIAQuestion();
+                    enviarOrdenGenPregunta();
                   }
                 }}
               >
@@ -256,27 +236,51 @@ function QuestionGenerate() {
             </div>
 
             {/* HISTORIAL */}
-            <div className="card">
-              <div className="history-header">
-                <h2> Pendientes de revision</h2>
-                <span onClick={iraTabla}>Ver todo</span>
+            {!socketConnected ? (
+              <div className="preview-content" style={{ minHeight: "400px" }}>
+                <h2 style={{ color: "#e03939" }}>⚠️ Error 404</h2>
+                <p>
+                  Socket no conectado. El servidor Maestro no está disponible.
+                </p>
+                <p style={{ fontSize: "0.85rem", color: "#999" }}>
+                  Asegúrate de que el servidor Socket.io esté corriendo en el
+                  puerto 3001.
+                </p>
               </div>
-              {!primeras3preg?.length ? (
-                <p>No hay preguntas</p>
-              ) : (
-                primeras3preg.map((pregunta) => (
-                  <div className="history-item" key={pregunta.id}>
-                    <small>ID pregunta: {pregunta.id}</small>
-                    <p>Tema: {pregunta.tema_nombre}</p>
-                  </div>
-                ))
-              )}
-            </div>
+            ) : (
+              <div className="card">
+                <div className="history-header">
+                  <h2> Pendientes de revision</h2>
+                  <span onClick={iraTabla}>Ver todo</span>
+                </div>
+                {!primeras3preg?.length ? (
+                  <p>No hay preguntas</p>
+                ) : (
+                  primeras3preg.map((pregunta) => (
+                    <div className="history-item" key={pregunta.id}>
+                      <small>ID pregunta: {pregunta.id}</small>
+                      <p>Tema: {pregunta.tema_nombre}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {/* RIGHT PANEL */}
           <div className="card">
-            {!preguntaGenerada ? (
+            {!socketConnected ? (
+              <div className="preview-content" style={{ minHeight: "400px" }}>
+                <h2 style={{ color: "#e03939" }}>⚠️ Error 404</h2>
+                <p>
+                  Socket no conectado. El servidor de IA no está disponible.
+                </p>
+                <p style={{ fontSize: "0.85rem", color: "#999" }}>
+                  Asegúrate de que el servidor Socket.io esté corriendo en el
+                  puerto 3001.
+                </p>
+              </div>
+            ) : !preguntaGenerada ? (
               <>
                 <div className="preview-header">
                   <div>
