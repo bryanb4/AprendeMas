@@ -516,25 +516,3 @@ body {
 
 
 
-/* Fondo principal: morado oscuro intenso */
-background-color: #2D1B4E;
-
-/* Hover: morado más claro, con brillo */
-.menu-item:hover {
-  background-color: #4A2E8B;
-  box-shadow: 0 2px 8px rgba(106, 17, 203, 0.3);
-}
-
-/* Activo: morado vibrante con degradado y glow */
-.menu-item.active {
-  background: linear-gradient(90deg, #6a11cb 0%, #8a50c9 100%);
-  color: white;
-  border-left-color: #c77dff;
-  box-shadow: 0 4px 12px rgba(106, 17, 203, 0.4);
-}
-
-/* Texto de íconos y emojis */
-.menu-item span:first-child {
-  font-size: 1.3rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-}
