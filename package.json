@@ -1,7 +1,7 @@
 {
-  "name": "aprende-plus-backend",
+  "name": "examendone-backend",
   "version": "1.0.0",
-  "description": "API backend para Aprende+ (Node.js + Express + PostgreSQL)",
+  "description": "API backend para ExamenDone (Node.js + Express + PostgreSQL)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -19,17 +19,12 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "chart.js": "^4.5.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "katex": "^0.16.47",
-    "openai": "^6.39.0",
-    "pg": "^8.11.5",
-    "prop-types": "^15.8.1",
-    "react-katex": "^3.1.0",
-    "socket.io-client": "^4.8.3"
+    "nodemailer": "^9.0.0",
+    "pg": "^8.11.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
