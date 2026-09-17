@@ -12,6 +12,9 @@ import GeometriaPage from './pages/GeometriaPage.jsx';
 import EstadisticaPage from './pages/EstadisticaPage.jsx';
 import GenerarPreguntas from './pages/GenerarPreguntaIA.jsx';
 import PaginaTablas from './pages/Preguntas_BD.jsx';
+import ExamenSimulacionPage from './pages/ExamenSimulacionPage.jsx';
+import EjercicioTemaPage from './pages/EjercicioTemaPage.jsx';
+import EvaluacionTemaPage from './pages/EvaluacionTemaPage.jsx';
 
 function App() {
   return (
@@ -26,6 +29,9 @@ function App() {
         <Route path="/estadistica" element={<EstadisticaPage />} />
         <Route path="/adminIA" element={<GenerarPreguntas />} />
         <Route path="/adminTabla" element={<PaginaTablas />} />
+        <Route path="/examen-simulacion" element={<ExamenSimulacionPage />} />
+        <Route path="/ejercicios/:materia/:temaIdx" element={<EjercicioTemaPage />} />
+        <Route path="/evaluacion/:materia/:temaIdx" element={<EvaluacionTemaPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

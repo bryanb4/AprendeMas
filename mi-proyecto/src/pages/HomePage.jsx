@@ -46,7 +46,7 @@ function HomePage() {
       <div className="hero-visual-side">
         <div className="hero-content-original">
           {/* Aquí está TEXTUALMENTE lo que tú tenías */}
-          <h2>Bienvenido a ExamenDone</h2>
+          <h2>Bienvenido a Aprende<span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 34, height: 34, marginLeft: 6, borderRadius: 12, background: 'linear-gradient(135deg, #c77dff 0%, #9f7cd9 100%)', color: '#2D1B4E', fontSize: 28, fontWeight: 900, lineHeight: 1, boxShadow: '0 4px 14px rgba(199,125,255,0.55)', transform: 'rotate(-4deg)', verticalAlign: 'middle' }}>+</span></h2>
 
           <p>
             ¿Te gustaría practicar para tu examen de admisión?
