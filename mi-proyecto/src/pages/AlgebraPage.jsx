@@ -1,7 +1,8 @@
 // src/pages/AlgebraPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { apiObtenerProgreso } from '../services/api.js';
 
 // 1. IMPORTAR COMPONENTE DE GRÁFICA DESDE LA CARPETA PUBLIC
 import GraficaEcuacionLineal from './Graficas/1GraficaEcuacionLineal.jsx';
@@ -2970,6 +2971,24 @@ function AlgebraPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedSeccionId, setSelectedSeccionId] = useState(location.state?.seccionId || null);
+  // Bandera por tema: true = aprobado, false = no aprobado, undefined = sin datos
+  const [progreso, setProgreso] = useState({});
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    apiObtenerProgreso(token)
+      .then((data) => {
+        const map = {};
+        (data.progreso || []).forEach((p) => {
+          // Álgebra: seccion.id 1-15 -> DB 6-20; 17,18,19 -> DB 21,22,23
+          const local = Number(p.tema_id) <= 20 ? Number(p.tema_id) - 5 : Number(p.tema_id) - 4;
+          map[local] = !!p.aprobado;
+        });
+        setProgreso(map);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleTabChange = (tab) => {
     navigate('/dashboard', { state: { activeTab: tab } });
@@ -3058,9 +3077,17 @@ function AlgebraPage() {
                 <span className="topic-name">
                   {seccion.titulo}
                 </span>
-                <button className="btn-start-topic" onClick={() => setSelectedSeccionId(seccion.id)}>
-                  Comenzar
-                </button>
+                <span className="badge-wrap">
+                  {progreso[seccion.id] === true && (
+                    <span className="badge-aprobado">✅ Sección aprobada</span>
+                  )}
+                  {progreso[seccion.id] !== true && (
+                    <span className="badge-pendiente">⏳ Falta por evaluar</span>
+                  )}
+                  <button className="btn-start-topic" onClick={() => setSelectedSeccionId(seccion.id)}>
+                    Comenzar
+                  </button>
+                </span>
               </li>
             ))}
           </ul>
@@ -3080,6 +3107,9 @@ function AlgebraPage() {
         .topic-name { font-size: 1.05rem; color: #2d1b45; text-align: left; font-weight: 600; }
         .btn-start-topic { background-color: #764ba2; color: white; border: none; border-radius: 30px; padding: 8px 18px; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 2px 8px rgba(118,75,162,0.2); line-height: 1.4; min-width: 80px; }
         .btn-start-topic:hover { background-color: #5f3b85; transform: scale(1.02); }
+        .badge-wrap { display: flex; align-items: center; }
+        .badge-aprobado { background: #764ba2; color: white; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 40px; padding: 7px 16px; margin-right: 8px; white-space: nowrap; border: 2px solid #5f3b85; }
+        .badge-pendiente { background: #ede7f6; color: #5f3b85; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 40px; padding: 7px 16px; margin-right: 8px; white-space: nowrap; border: 2px solid #c9b8ec; }
         @media (max-width: 900px) { 
           .main-content { padding: 24px 20px; } 
           .contenido-card { padding: 24px 20px; } 

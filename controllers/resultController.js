@@ -1,11 +1,15 @@
 const pool = require('../db/conexion');
 
 exports.getResults = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user && req.user.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Token requerido" });
+  }
 
   try {
     const result = await pool.query(
-      "SELECT * FROM resultados WHERE usuarios_id=$1",
+      "SELECT * FROM resultados WHERE usuario_id=$1",
       [userId]
     );
 

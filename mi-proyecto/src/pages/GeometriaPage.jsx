@@ -1,7 +1,8 @@
 // src/pages/GeometriaPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { apiObtenerProgreso } from '../services/api.js';
 
 const temasGeometria = [
   "Ángulos y triángulos",
@@ -16,6 +17,22 @@ const temasGeometria = [
 function GeometriaPage() {
   const navigate = useNavigate();
   const [selectedTopic, setSelectedTopic] = useState(null);
+  // Bandera por nombre de tema (Geometría aún sin IDs locales estables)
+  const [progreso, setProgreso] = useState({});
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    apiObtenerProgreso(token)
+      .then((data) => {
+        const map = {};
+        (data.progreso || []).forEach((p) => {
+          if (p.materia === 'Geometría y Medición') map[p.tema] = !!p.aprobado;
+        });
+        setProgreso(map);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleTabChange = (tab) => navigate('/dashboard', { state: { activeTab: tab } });
   const handleLogout = () => {
@@ -83,9 +100,17 @@ function GeometriaPage() {
             {temasGeometria.map((tema, idx) => (
               <li key={idx} className="topic-item">
                 <span className="topic-name">{tema}</span>
-                <button className="btn-start-topic" onClick={() => setSelectedTopic(tema)}>
-                  Comenzar
-                </button>
+                <span className="badge-wrap">
+                  {progreso[tema] === true && (
+                    <span className="badge-aprobado">✅ Sección aprobada</span>
+                  )}
+                  {progreso[tema] !== true && (
+                    <span className="badge-pendiente">⏳ Falta por evaluar</span>
+                  )}
+                  <button className="btn-start-topic" onClick={() => setSelectedTopic(tema)}>
+                    Comenzar
+                  </button>
+                </span>
               </li>
             ))}
           </ul>
@@ -105,6 +130,9 @@ function GeometriaPage() {
         .topic-name { font-size: 1.1rem; color: #2d1b45; text-align: left; }
         .btn-start-topic { background-color: #764ba2; color: white; border: none; border-radius: 30px; padding: 6px 16px; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 2px 8px rgba(118,75,162,0.2); line-height: 1.4; min-width: 80px; }
         .btn-start-topic:hover { background-color: #5f3b85; transform: scale(1.02); }
+        .badge-wrap { display: flex; align-items: center; }
+        .badge-aprobado { background: #764ba2; color: white; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 40px; padding: 7px 16px; margin-right: 8px; white-space: nowrap; border: 2px solid #5f3b85; }
+        .badge-pendiente { background: #ede7f6; color: #5f3b85; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 40px; padding: 7px 16px; margin-right: 8px; white-space: nowrap; border: 2px solid #c9b8ec; }
         @media (max-width: 900px) { .main-content { padding: 24px 20px; } .contenido-card { padding: 24px 20px; } }
       `}</style>
     </div>

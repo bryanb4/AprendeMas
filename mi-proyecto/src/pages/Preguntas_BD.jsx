@@ -1,47 +1,147 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import Sidebar from "../components/Sidebar";
-import logo from "../assets/close_icon_143104.svg";
-import { data } from "react-router-dom";
 
 function PaginaTablas() {
+  const navigate = useNavigate();
   const handleTabChange = (tab) => {
     navigate("/dashboard", { state: { activeTab: tab } });
   };
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("avatar");
     navigate("/");
   };
   const master = useRef(null);
+  const seleccionadaRef = useRef(null);
   const [preguntas, setPreguntas] = useState([]);
+  const [authError, setAuthError] = useState(null);
   const [preguntaSeleccionada, setPreguntaSeleccionada] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [informacionEditada, setinformacionEditada] = useState(null);
-  const [socketConnected, setSocketConnected] = useState(false);
+  const [eliminarId, setEliminarId] = useState(null);
+  const [msgEliminar, setMsgEliminar] = useState(null);
+  const [socketKey, setSocketKey] = useState(0);
+  const [connState, setConnState] = useState("connecting");
+  const [connMotivo, setConnMotivo] = useState(null);
+  const [filtro, setFiltro] = useState("todas");
+
+  const esPendiente = (status) => status === "pending_review";
+  const etiquetaEstado = (status) => (esPendiente(status) ? "Pendiente" : "Aprobada");
+  const claseEstado = (status) =>
+    esPendiente(status) ? "clase-pending" : "clase-aprobado";
+  const nombreNivel = (nivel) =>
+    ({ 400: "Básico", 800: "Medio", 1200: "Avanzado" })[Number(nivel)] || "—";
+  const etiquetaTipo = (tipo) =>
+    ({ ejercicios: "Ejercicios", evaluacion: "Evaluación", simulacion: "Simulación" })[tipo] || (tipo || "—");
+
+  const totalPendientes = preguntas.filter((p) => esPendiente(p.status)).length;
+  const visibles = preguntas.filter((p) => {
+    if (filtro === "pendientes") return esPendiente(p.status);
+    if (filtro === "aprobadas") return !esPendiente(p.status);
+    return true;
+  });
+
   useEffect(() => {
-    master.current = io("http://localhost:3001");
+    const socket = io("http://localhost:3001", { autoConnect: false });
+    master.current = socket;
+    let intentos = 0;
+    let reintentoTimer = null;
+    let montado = true;
 
-    master.current.on("connect", () => setSocketConnected(true));
-    master.current.on("disconnect", () => setSocketConnected(false));
+    const programarReintento = () => {
+      clearTimeout(reintentoTimer);
+      intentos += 1;
+      if (intentos >= 3) {
+        if (montado) {
+          setConnMotivo(
+            "No se pudo contactar al Master en :3001 tras 3 intentos. Verifica que 'npm run master' esté corriendo.",
+          );
+          setConnState("failed");
+        }
+        return;
+      }
+      reintentoTimer = setTimeout(() => {
+        if (montado) socket.connect();
+      }, 1200 * intentos);
+    };
 
-    master.current.emit("registro", { rol: "front-admin" });
+    socket.on("connect", () => {
+      intentos = 0;
+      clearTimeout(reintentoTimer);
+      if (!montado) return;
+      setConnMotivo(null);
+      setAuthError(null);
+      setConnState("connected");
+    });
+    socket.on("disconnect", (reason) => {
+      if (reason === "io server disconnect") {
+        if (montado) setConnState("failed");
+        return;
+      }
+      if (montado) setConnState("connecting");
+    });
+    socket.on("connect_error", () => {
+      if (montado) setConnState("connecting");
+      programarReintento();
+    });
+
+    socket.emit("registro", {
+      rol: "front-admin",
+      token: localStorage.getItem("token"),
+    });
+
+    socket.on("no_autorizado", (info) => {
+      clearTimeout(reintentoTimer);
+      if (!montado) return;
+      setAuthError(
+        "Sesión no válida como admin (" +
+          ((info && info.message) || "sin token") +
+          "). Vuelve a iniciar sesión.",
+      );
+      setConnState("failed");
+    });
+
+    socket.connect();
 
     return () => {
-      master.current.off("connect");
-      master.current.off("disconnect");
-      master.current.disconnect();
+      montado = false;
+      clearTimeout(reintentoTimer);
+      socket.removeAllListeners();
+      socket.disconnect();
+      if (master.current === socket) master.current = null;
     };
-  }, []);
+  }, [socketKey]);
+
+  const reintentarConexion = () => {
+    setAuthError(null);
+    setConnMotivo(null);
+    setConnState("connecting");
+    setSocketKey((k) => k + 1);
+  };
 
   const guardar = async () => {
+    const aprobada = {
+      ...informacionEditada,
+      status: "approved",
+    };
+    setinformacionEditada(aprobada);
     master.current.emit("patchPreguntaBD", {
-      informacionEditada,
+      informacionEditada: aprobada,
       preguntaSeleccionada,
     });
   };
 
+  const confirmarEliminar = () => {
+    if (!eliminarId || !master.current) return;
+    master.current.emit("eliminarPreguntaBD", { id: eliminarId });
+  };
+
   const openModal = (pregunta) => {
     setPreguntaSeleccionada(pregunta);
+    seleccionadaRef.current = pregunta.id;
 
     setinformacionEditada({
       ...pregunta,
@@ -70,61 +170,98 @@ function PaginaTablas() {
 
       setModalOpen(false);
     });
+
+    master.current.on("preguntaEliminada", (data) => {
+      const id = data && data.id;
+      setPreguntas((prev) => prev.filter((p) => p.id !== id));
+      if (seleccionadaRef.current === id) {
+        seleccionadaRef.current = null;
+        setPreguntaSeleccionada(null);
+        setModalOpen(false);
+      }
+      setEliminarId(null);
+      setMsgEliminar(null);
+    });
+
+    master.current.on("errorEliminar", (data) => {
+      setMsgEliminar((data && data.message) || "No se pudo eliminar la pregunta");
+    });
   }, []);
   return (
     <div className="dashboard-layout">
       <Sidebar
-        activeTab="aprendizaje"
+        activeTab="admin"
         onTabChange={handleTabChange}
         onLogout={handleLogout}
       />
-      {!socketConnected ? (
+      {connState === "failed" ? (
         <div className="preview-content" style={{ minHeight: "400px" }}>
-          <h2 style={{ color: "#e03939" }}>⚠️ Error 404</h2>
-          <p>Socket no conectado. El servidor Maestro no está disponible.</p>
+          <h2 style={{ color: "#e03939" }}>⚠️ Sin conexión</h2>
+          <p>{connMotivo || "El servidor Maestro no está disponible."}</p>
+          {authError && (
+            <p style={{ color: "#e03939", fontWeight: 600 }}>⚠️ {authError}</p>
+          )}
+          <button className="botonGuardar" onClick={reintentarConexion}>
+            Reintentar conexión
+          </button>
+        </div>
+      ) : connState === "connecting" ? (
+        <div className="preview-content" style={{ minHeight: "400px" }}>
+          <h2 style={{ color: "#6f42c1" }}>Conectando al servidor IA…</h2>
           <p style={{ fontSize: "0.85rem", color: "#999" }}>
-            Asegúrate de que el servidor Socket.io esté corriendo en el puerto
-            3001.
+            Estableciendo canal con el Master en el puerto 3001.
           </p>
         </div>
       ) : (
         <main className="main-content">
+          <div className="banco-header-card">
+            <div>
+              <h2>🗂 Banco de preguntas</h2>
+              <p>
+                {preguntas.length} en total · {totalPendientes} pendientes de revisión
+              </p>
+            </div>
+            <div className="banco-filtros">
+              {[
+                { id: "todas", label: "Todas" },
+                { id: "pendientes", label: "Pendientes" },
+                { id: "aprobadas", label: "Aprobadas" },
+              ].map((f) => (
+                <button
+                  key={f.id}
+                  className={`filtro-btn ${filtro === f.id ? "active" : ""}`}
+                  onClick={() => setFiltro(f.id)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="grid-dosElementos">
             <table className="tabla-preguntas">
               <thead>
                 <tr>
-                  <th className="p-4">ID de Pregunta</th>
-                  <th className="p-4">Materia</th>
+                  <th className="p-4">ID</th>
+                  <th className="p-4">Área</th>
                   <th className="p-4">Tema</th>
+                  <th className="p-4">Destino</th>
                   <th className="p-4">Estado</th>
                   <th className="p-4 text-right">Editar</th>
+                  <th className="p-4 text-right">Eliminar</th>
                 </tr>
               </thead>
               <tbody>
-                {preguntas.map((pregunta) => (
+                {visibles.map((pregunta) => (
                   <tr key={pregunta.id} className="hover-preguntas">
                     <td className="alinea-izq">
-                      <p className="color-idpregunta"># {pregunta.id}</p>
+                      <p className="color-idpregunta">#{pregunta.id}</p>
                     </td>
+                    <td>{pregunta.materia_nombre}</td>
+                    <td>{pregunta.tema_nombre}</td>
+                    <td>{etiquetaTipo(pregunta.tipo)}</td>
                     <td>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        {pregunta.materia_nombre}
-                      </p>
-                    </td>
-                    <td>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        {pregunta.tema_nombre}
-                      </p>
-                    </td>
-                    <td>
-                      <p
-                        className={`borde-estado ${
-                          pregunta.status === "pending_review"
-                            ? "clase-pending"
-                            : "clase-aprobado"
-                        }`}
-                      >
-                        {pregunta.status}
+                      <p className={`borde-estado ${claseEstado(pregunta.status)}`}>
+                        {etiquetaEstado(pregunta.status)}
                       </p>
                     </td>
                     <td>
@@ -151,53 +288,132 @@ function PaginaTablas() {
                         </svg>
                       </button>
                     </td>
+                    <td>
+                      <button
+                        className="botoneditar botoneliminar"
+                        title={`Eliminar pregunta #${pregunta.id}`}
+                        onClick={() => {
+                          setMsgEliminar(null);
+                          setEliminarId(pregunta.id);
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                          <path d="M3 6h18" />
+                          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            {modalOpen && preguntaSeleccionada && (
+            {visibles.length === 0 && (
+              <div className="banco-vacio">
+                No hay preguntas en este filtro. Genera nuevas en 🤖 Generador IA.
+              </div>
+            )}
+            {eliminarId !== null && (
               <div className="modal-overlay">
-                <div className="card-editar">
-                  <div className="grid-dosElementosRow">
-                    <div className="contenedorTituloCerrar">
-                      <h2 className="alinear-centro texto-blanco">
-                        Editar pregunta
-                      </h2>
+                <div className="banco-modal" style={{ maxWidth: 440 }}>
+                  <div className="banco-modal-header">
+                    <h2>Eliminar pregunta</h2>
+                    <button
+                      className="banco-modal-cerrar"
+                      onClick={() => {
+                        setEliminarId(null);
+                        setMsgEliminar(null);
+                      }}
+                      aria-label="Cerrar"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div style={{ padding: 28, textAlign: 'center' }}>
+                    <p style={{ fontSize: '1.05rem', color: '#333', marginTop: 0 }}>
+                      ¿Seguro quieres eliminar la pregunta <strong>#{eliminarId}</strong>?
+                    </p>
+                    <p style={{ fontSize: '0.9rem', color: '#777' }}>
+                      Esta acción no se puede deshacer.
+                    </p>
+                    {msgEliminar && (
+                      <p style={{ color: '#c62828', fontWeight: 600 }}>⚠️ {msgEliminar}</p>
+                    )}
+                    <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 16 }}>
                       <button
-                        className="botonCerrar margenBoton"
-                        onClick={() => setModalOpen(false)}
+                        className="botonGuardar"
+                        style={{ backgroundColor: '#c62828', width: 'auto', padding: '12px 32px', marginTop: 0 }}
+                        onClick={confirmarEliminar}
                       >
-                        <img className="icono-boton" src={logo} alt="Cerrar" />
+                        Sí, eliminar
+                      </button>
+                      <button
+                        className="botonGuardar"
+                        style={{ backgroundColor: '#ede7f6', color: '#5f3b85', width: 'auto', padding: '12px 32px', marginTop: 0 }}
+                        onClick={() => {
+                          setEliminarId(null);
+                          setMsgEliminar(null);
+                        }}
+                      >
+                        No, cancelar
                       </button>
                     </div>
-
-                    <p className="p-idpregunta color-idpregunta">
-                      ID: #{preguntaSeleccionada.id}
-                    </p>
                   </div>
-                  <div className="grid-dosElementosPreg">
-                    <div className="grid-tresRow">
-                      <textarea
-                        className="cuadro-edicion"
-                        value={informacionEditada?.content || ""}
-                        onChange={(e) =>
-                          setinformacionEditada((prev) => ({
-                            ...prev,
-                            content: e.target.value,
-                          }))
-                        }
-                      />
-                      <div className="auto">
-                        <p className="texto-blanco"> Opciones:</p>
+                </div>
+              </div>
+            )}
+            {modalOpen && preguntaSeleccionada && (
+              <div className="modal-overlay">
+                <div className="banco-modal">
+                  <div className="banco-modal-header">
+                    <h2>
+                      Editar pregunta #{preguntaSeleccionada.id}{" "}
+                      <span className={`borde-estado ${claseEstado(preguntaSeleccionada.status)}`}>
+                        {etiquetaEstado(preguntaSeleccionada.status)}
+                      </span>
+                    </h2>
+                    <button
+                      className="banco-modal-cerrar"
+                      onClick={() => setModalOpen(false)}
+                      aria-label="Cerrar"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="banco-modal-body">
+                    <div>
+                      <div className="banco-campo">
+                        <span>Enunciado (acepta LaTeX $...$)</span>
+                        <textarea
+                          className="banco-input"
+                          value={informacionEditada?.content || ""}
+                          onChange={(e) =>
+                            setinformacionEditada((prev) => ({
+                              ...prev,
+                              content: e.target.value,
+                            }))
+                          }
+                        />
                       </div>
-
-                      <div className="grid-dosElementospeque">
-                        <div className="elementos-flex">
-                          {informacionEditada?.options?.map((option, index) => (
+                      <div className="banco-campo">
+                        <span>Opciones</span>
+                        {informacionEditada?.options?.map((option, index) => (
+                          <div className="banco-opcion-row" key={index}>
+                            <span className="banco-letra">
+                              {"ABCD"[index] || "•"}
+                            </span>
                             <textarea
-                              className="cuadro-edicionOpc"
-                              key={index}
-                              type="text"
+                              className="banco-input"
                               value={option}
                               onChange={(e) => {
                                 const nuevasOpciones = [
@@ -212,72 +428,61 @@ function PaginaTablas() {
                                 });
                               }}
                             />
-                          ))}
-                        </div>
+                          </div>
+                        ))}
                       </div>
-                      <p className="elemento-menos-margen texto-blanco">
-                        Respuesta Correcta:{" "}
-                      </p>
-                      <textarea
-                        className="cuadro-edicionOpc"
-                        type="text"
-                        value={informacionEditada.correct_option}
-                        onChange={(e) =>
-                          setinformacionEditada((prev) => ({
-                            ...prev,
-                            correct_option: e.target.value,
-                          }))
-                        }
-                      />
-                      <p className="elemento-menos-margen texto-blanco">
-                        Explicacion:
-                      </p>
-                      <textarea
-                        className="cuadro-edicion"
-                        value={informacionEditada?.explanation || ""}
-                        onChange={(e) =>
-                          setinformacionEditada((prev) => ({
-                            ...prev,
-                            explanation: e.target.value,
-                          }))
-                        }
-                      />
-                      <div className="contenedor">
-                        <p
-                          className={`borde-estado ${
-                            informacionEditada.status === "pending_review"
-                              ? "clase-pending"
-                              : "clase-aprobado"
-                          }`}
-                        >
-                          {informacionEditada.status}
-                        </p>
+                      <div className="banco-campo">
+                        <span>Respuesta correcta (debe coincidir con una opción)</span>
+                        <textarea
+                          className="banco-input"
+                          value={informacionEditada?.correct_option || ""}
+                          onChange={(e) =>
+                            setinformacionEditada((prev) => ({
+                              ...prev,
+                              correct_option: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="banco-campo">
+                        <span>Explicación</span>
+                        <textarea
+                          className="banco-input"
+                          value={informacionEditada?.explanation || ""}
+                          onChange={(e) =>
+                            setinformacionEditada((prev) => ({
+                              ...prev,
+                              explanation: e.target.value,
+                            }))
+                          }
+                        />
                       </div>
                     </div>
-                    <div>
-                      <div className="nombre-id">
-                        <p className="elemento-menos-margen texto-blanco">
-                          Materia: {preguntaSeleccionada.materia_nombre}
-                        </p>
-                        <p className="elemento-menos-margen color-idpregunta">
-                          ID Materia: #{preguntaSeleccionada.materia_id}
-                        </p>
+                    <aside className="banco-meta">
+                      <h3>Datos del reactivo</h3>
+                      <div className="banco-chip">
+                        <strong>Área:</strong> {preguntaSeleccionada.materia_nombre}
                       </div>
-                      <div className="nombre-id">
-                        <p className="elemento-menos-margen texto-blanco">
-                          Tema: {preguntaSeleccionada.tema_nombre}
-                        </p>
-                        <p className="elemento-menos-margen color-idpregunta">
-                          ID Tema: #{preguntaSeleccionada.temas_id}
-                        </p>
-                        <p className="elemento-menos-margen texto-blanco">
-                          Valor en rating: {preguntaSeleccionada.rating}
-                        </p>
+                      <div className="banco-chip">
+                        <strong>Tema:</strong> {preguntaSeleccionada.tema_nombre}
+                      </div>
+                      <div className="banco-chip">
+                        <strong>Nivel:</strong> {nombreNivel(preguntaSeleccionada.nivel)}
+                      </div>
+                      <div className="banco-chip">
+                        <strong>Tipo:</strong> {etiquetaTipo(preguntaSeleccionada.tipo)}
+                      </div>
+                      <div className="banco-chip">
+                        <strong>Enfoque:</strong>{" "}
+                        {preguntaSeleccionada.enfoque === "teorica" ? "Teórica" : "Práctica"}
+                      </div>
+                      <div className="banco-chip">
+                        <strong>Rating Elo:</strong> {preguntaSeleccionada.rating ?? "—"}
                       </div>
                       <button className="botonGuardar" onClick={guardar}>
-                        Aprobar y Guardar
+                        ✓ Aprobar y Guardar
                       </button>
-                    </div>
+                    </aside>
                   </div>
                 </div>
               </div>

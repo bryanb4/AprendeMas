@@ -1,5 +1,6 @@
 // src/components/PerfilView.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { apiGetProfile, apiUpdateProfile, apiChangePassword } from '../services/api.js';
 
 const AVATARES = [
   '/avatars/1PerroAvatar.png',
@@ -20,54 +21,132 @@ const AVATARES = [
 
 const PerfilView = () => {
   const [formData, setFormData] = useState({
-    nombres: 'Nombre',
-    primerApellido: 'Apellido',
-    segundoApellido: 'Apellido',
+    nombres: '',
+    primerApellido: '',
+    segundoApellido: '',
     fechaNacimiento: '',
     passwordActual: '',
     passwordNueva: '',
     passwordConfirmar: '',
   });
+  const [email, setEmail] = useState('');
+  const [institucion, setInstitucion] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
+  const [msgDatos, setMsgDatos] = useState(null);
+  const [msgPass, setMsgPass] = useState(null);
+  const [msgAvatar, setMsgAvatar] = useState(null);
+  const [savingDatos, setSavingDatos] = useState(false);
+  const [savingPass, setSavingPass] = useState(false);
+  const [savingAvatar, setSavingAvatar] = useState(false);
   const [avatar, setAvatar] = useState(() => localStorage.getItem('avatar') || '');
   const [avatarTemp, setAvatarTemp] = useState(avatar);
   const [showSelector, setShowSelector] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setLoadError('No hay sesión activa. Inicia sesión de nuevo.');
+      setLoading(false);
+      return;
+    }
+    apiGetProfile(token)
+      .then((data) => {
+        setFormData((prev) => ({
+          ...prev,
+          nombres: data.nombre || data.nombres || '',
+          primerApellido: data.primer_apellido || '',
+          segundoApellido: data.segundo_apellido || '',
+          fechaNacimiento: data.fecha_nacimiento ? String(data.fecha_nacimiento).slice(0, 10) : '',
+        }));
+        setEmail(data.email || '');
+        setInstitucion(data.institucion || '');
+        if (data.avatar) {
+          setAvatar(data.avatar);
+          setAvatarTemp(data.avatar);
+          localStorage.setItem('avatar', data.avatar);
+        }
+      })
+      .catch((err) => setLoadError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleActualizarDatos = (e) => {
+  const handleActualizarDatos = async (e) => {
     e.preventDefault();
-    console.log('Datos actualizados:', formData);
-    // Aquí conectarías con tu API
+    setMsgDatos(null);
+    setSavingDatos(true);
+    try {
+      const token = localStorage.getItem('token');
+      const data = await apiUpdateProfile(token, {
+        nombre: formData.nombres,
+        primerApellido: formData.primerApellido,
+        segundoApellido: formData.segundoApellido,
+        fechaNacimiento: formData.fechaNacimiento || null,
+      });
+      setMsgDatos({ ok: true, text: data.message || 'Datos actualizados correctamente' });
+    } catch (err) {
+      setMsgDatos({ ok: false, text: err.message });
+    } finally {
+      setSavingDatos(false);
+    }
   };
 
-  const handleCambiarContrasena = (e) => {
+  const handleCambiarContrasena = async (e) => {
     e.preventDefault();
-    console.log('Cambiar contraseña');
-    // Validar y enviar
+    setMsgPass(null);
+    if (formData.passwordNueva !== formData.passwordConfirmar) {
+      setMsgPass({ ok: false, text: 'La nueva contraseña y su confirmación no coinciden' });
+      return;
+    }
+    setSavingPass(true);
+    try {
+      const token = localStorage.getItem('token');
+      const data = await apiChangePassword(token, formData.passwordActual, formData.passwordNueva);
+      setMsgPass({ ok: true, text: data.message || 'Contraseña actualizada correctamente' });
+      setFormData((prev) => ({ ...prev, passwordActual: '', passwordNueva: '', passwordConfirmar: '' }));
+    } catch (err) {
+      setMsgPass({ ok: false, text: err.message });
+    } finally {
+      setSavingPass(false);
+    }
   };
 
   const handleGuardarAvatar = async () => {
     if (!avatarTemp) return;
-    setAvatar(avatarTemp);
-    localStorage.setItem('avatar', avatarTemp);
-    setShowSelector(false);
-    // Intento de persistir en backend (si hay token y endpoint)
+    setMsgAvatar(null);
+    setSavingAvatar(true);
     try {
       const token = localStorage.getItem('token');
       if (token) {
-        await fetch('/api/profile', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', authorization: token },
-          body: JSON.stringify({ avatar: avatarTemp }),
-        });
+        await apiUpdateProfile(token, { avatar: avatarTemp });
       }
-    } catch {
+      setAvatar(avatarTemp);
+      localStorage.setItem('avatar', avatarTemp);
+      setShowSelector(false);
+      setMsgAvatar({ ok: true, text: 'Avatar actualizado' });
+    } catch (err) {
       // Sin backend: queda solo en localStorage
+      setAvatar(avatarTemp);
+      localStorage.setItem('avatar', avatarTemp);
+      setShowSelector(false);
+      setMsgAvatar({ ok: false, text: 'Se guardó solo localmente: ' + err.message });
+    } finally {
+      setSavingAvatar(false);
     }
   };
+
+  if (loading) {
+    return <div className="perfil-view animate-fade-in"><p>Cargando tus datos...</p></div>;
+  }
+
+  if (loadError) {
+    return <div className="perfil-view animate-fade-in"><p style={{ color: 'red' }}>{loadError}</p></div>;
+  }
 
   return (
     <div className="perfil-view animate-fade-in">
@@ -288,10 +367,15 @@ const PerfilView = () => {
                 ))}
               </div>
               <div className="avatar-actions">
-                <button className="btn-solid-purple" style={{ padding: '10px 20px', fontSize: 14 }} onClick={handleGuardarAvatar}>
-                  Guardar avatar
+                <button className="btn-solid-purple" style={{ padding: '10px 20px', fontSize: 14 }} onClick={handleGuardarAvatar} disabled={savingAvatar}>
+                  {savingAvatar ? 'Guardando...' : 'Guardar avatar'}
                 </button>
               </div>
+              {msgAvatar && (
+                <p style={{ color: msgAvatar.ok ? '#2e7d32' : '#c62828', fontSize: '0.9rem', textAlign: 'center' }}>
+                  {msgAvatar.text}
+                </p>
+              )}
             </div>
           )}
 
@@ -299,13 +383,13 @@ const PerfilView = () => {
             <div className="label">Correo asociado</div>
             <div className="value">
               <i className="fas fa-check-circle" style={{ color: '#2ecc71' }}></i>
-              usuario.ejemplo@email.com
+              {email || '—'}
             </div>
 
             <div className="label">Institución</div>
             <div className="value">
               <i className="fas fa-graduation-cap" style={{ color: '#764ba2' }}></i>
-              Tu Institución Educativa
+              {institucion || '—'}
             </div>
           </div>
         </div>
@@ -363,8 +447,13 @@ const PerfilView = () => {
                 />
               </div>
             </div>
-            <button className="btn-solid-purple" onClick={handleActualizarDatos}>
-              <i className="fas fa-sync-alt"></i> Actualizar Datos
+            {msgDatos && (
+              <p style={{ color: msgDatos.ok ? '#2e7d32' : '#c62828', fontSize: '0.9rem' }}>
+                {msgDatos.text}
+              </p>
+            )}
+            <button className="btn-solid-purple" onClick={handleActualizarDatos} disabled={savingDatos}>
+              <i className="fas fa-sync-alt"></i> {savingDatos ? 'Guardando...' : 'Actualizar Datos'}
             </button>
           </div>
 
@@ -411,8 +500,13 @@ const PerfilView = () => {
                 </div>
               </div>
             </div>
-            <button className="btn-solid-purple" onClick={handleCambiarContrasena}>
-              <i className="fas fa-key"></i> Cambiar Contraseña
+            {msgPass && (
+              <p style={{ color: msgPass.ok ? '#2e7d32' : '#c62828', fontSize: '0.9rem' }}>
+                {msgPass.text}
+              </p>
+            )}
+            <button className="btn-solid-purple" onClick={handleCambiarContrasena} disabled={savingPass}>
+              <i className="fas fa-key"></i> {savingPass ? 'Guardando...' : 'Cambiar Contraseña'}
             </button>
           </div>
         </div>

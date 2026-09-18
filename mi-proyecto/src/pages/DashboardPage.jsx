@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PerfilView from './ProfileView';
+import ResultadosView from './ResultadosView';
 import Sidebar from '../components/Sidebar';
 
 const materias = [
@@ -83,6 +84,8 @@ function DashboardPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('avatar');
     navigate('/');
   };
 
@@ -170,7 +173,7 @@ function DashboardPage() {
               </p>
               <button
                 className="btn-card-action btn-comenzar"
-                onClick={() => console.log('Comenzar examen simulación')}
+                onClick={() => navigate('/examen-simulacion', { state: { autostart: true } })}
               >
                 Comenzar con el examen simulación →
               </button>
@@ -231,12 +234,7 @@ function DashboardPage() {
           </div>
         )}
 
-        {activeTab === 'resultados' && (
-          <div className="animate-fade-in" style={{ background: 'white', padding: 32, borderRadius: 24, textAlign: 'left' }}>
-            <h2>Sección de Resultados</h2>
-            <p>Aquí verás tu historial de calificaciones.</p>
-          </div>
-        )}
+        {activeTab === 'resultados' && <ResultadosView />}
       </main>
 
       <style>{`

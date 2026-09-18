@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import DashboardPage from './DashboardPage';
-import { mockLogin } from '../services/api.js'; // Importamos la función de login
+import { mockLogin, apiResendVerification } from '../services/api.js'; // Importamos la función de login
 
 function HomePage() {
   const navigate = useNavigate();
@@ -13,6 +13,8 @@ function HomePage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [info, setInfo] = useState(null);
 
   // Verificamos si ya hay usuario
   const isAuthenticated = localStorage.getItem('token') !== null;
@@ -27,14 +29,35 @@ function HomePage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setInfo(null);
+    setNeedsVerification(false);
     try {
       const data = await mockLogin(email, password);
       localStorage.setItem('token', data.token);
-      navigate(0); // Recarga para entrar al Dashboard
+      if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+      if (data.user?.rol === 'admin') {
+        navigate('/adminIA'); // El admin entra directo a preguntas
+      } else {
+        navigate(0); // Recarga para entrar al Dashboard
+      }
     } catch (err) {
-      setError(err.message);
+      if (err.status === 403 || err.data?.needsVerification) {
+        setNeedsVerification(true);
+        setError('Debes confirmar tu correo antes de entrar. Revisa tu bandeja.');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      const data = await apiResendVerification(email);
+      setInfo(data.message);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -71,6 +94,12 @@ function HomePage() {
           
           <form onSubmit={handleLogin}>
             {error && <p style={{ color: 'red', fontSize: '0.9rem' }}>{error}</p>}
+            {info && <p style={{ color: 'green', fontSize: '0.9rem' }}>{info}</p>}
+            {needsVerification && (
+              <button type="button" onClick={handleResend} style={{ marginBottom: '10px', background: 'none', border: 'none', color: '#005A9C', fontWeight: 'bold', cursor: 'pointer' }}>
+                Reenviar correo de confirmación
+              </button>
+            )}
             
             <div className="input-group">
               <label>Correo Electrónico</label>

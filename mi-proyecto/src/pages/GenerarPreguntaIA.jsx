@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { BlockMath } from "react-katex";
 import ReactMarkdown from "react-markdown";
@@ -11,31 +11,135 @@ function QuestionGenerate() {
   const navigate = useNavigate();
 
   const [level, setLevel] = useState("Básico");
+  const [tipoExamen, setTipoExamen] = useState("ejercicios");
+  const [enfoque, setEnfoque] = useState("practica");
+  const [errorIA, setErrorIA] = useState(null);
   const [materias, setMaterias] = useState([]);
   const [temas, setTemas] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState("");
   const [selectedTema, setSelectedTema] = useState("");
   const [preguntaGenerada, setPreguntaGenerada] = useState("");
   const [estadoTitulo, setEstadoTitulo] = useState("Listo para Generar");
-  const [primeras3preg, setPrimeras3preg] = useState([]);
-  const [socketConnected, setSocketConnected] = useState(false);
+  // connecting: apretón de manos en curso (neutral, sin rojo)
+  // connected: listo | failed: error real tras reintentos
+  const [connState, setConnState] = useState("connecting");
+  const [connMotivo, setConnMotivo] = useState(null);
+  const [socketKey, setSocketKey] = useState(0);
+  const [msgGuardado, setMsgGuardado] = useState(null);
+  const [generando, setGenerando] = useState(false);
+  const [segundos, setSegundos] = useState(0);
+  const timerRef = useRef(null);
+
+  const iniciarTimer = () => {
+    setGenerando(true);
+    setSegundos(0);
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => setSegundos((s) => s + 1), 1000);
+  };
+
+  const detenerTimer = () => {
+    setGenerando(false);
+    clearInterval(timerRef.current);
+  };
 
   const master = useRef(null);
 
   useEffect(() => {
-    master.current = io("http://localhost:3001");
+    // autoConnect:false + connect() explícito: cada montaje abre una
+    // conexión nueva de forma determinística (sin depender de la caché
+    // interna del manager, que quedaba colgada al salir y volver).
+    const socket = io("http://localhost:3001", { autoConnect: false });
+    master.current = socket;
+    let intentos = 0;
+    let reintentoTimer = null;
+    let montado = true;
 
-    master.current.on("connect", () => setSocketConnected(true));
-    master.current.on("disconnect", () => setSocketConnected(false));
+    const programarReintento = () => {
+      clearTimeout(reintentoTimer);
+      intentos += 1;
+      if (intentos >= 3) {
+        if (montado) {
+          setConnMotivo(
+            "No se pudo contactar al Master en :3001 tras 3 intentos. Verifica que 'npm run master' y 'npm run worker' estén corriendo.",
+          );
+          setConnState("failed");
+        }
+        return;
+      }
+      reintentoTimer = setTimeout(() => {
+        if (montado) socket.connect();
+      }, 1200 * intentos);
+    };
 
-    master.current.emit("registro", { rol: "front-admin" });
+    socket.on("connect", () => {
+      intentos = 0;
+      clearTimeout(reintentoTimer);
+      if (!montado) return;
+      setConnMotivo(null);
+      setConnState("connected");
+    });
+    socket.on("disconnect", (reason) => {
+      // Expulsión del servidor (ej. rechazo): no reintentar a ciegas
+      if (reason === "io server disconnect") {
+        if (montado) setConnState("failed");
+        return;
+      }
+      if (montado) setConnState("connecting");
+    });
+    socket.on("connect_error", () => {
+      if (montado) setConnState("connecting");
+      programarReintento();
+    });
+
+    socket.on("no_autorizado", (info) => {
+      clearTimeout(reintentoTimer);
+      if (!montado) return;
+      setConnMotivo(
+        "Sesión no válida como admin (" +
+          ((info && info.message) || "sin token") +
+          "). Vuelve a iniciar sesión.",
+      );
+      setConnState("failed");
+    });
+
+    socket.on("errorIA", (info) => {
+      detenerTimer();
+      setErrorIA((info && info.message) || "El worker IA no respondió");
+    });
+
+    socket.on("preguntaGuardada", (info) => {
+      setMsgGuardado(`✅ Pregunta guardada con ID #${info && info.id}.`);
+      setPreguntaGenerada("");
+    });
+
+    socket.on("errorGuardado", (info) => {
+      setMsgGuardado(null);
+      setErrorIA((info && info.message) || "No se pudo guardar la pregunta");
+    });
+
+    socket.emit("registro", {
+      rol: "front-admin",
+      token: localStorage.getItem("token"),
+    });
+
+    socket.connect();
 
     return () => {
-      master.current.off("connect");
-      master.current.off("disconnect");
-      master.current.disconnect();
+      montado = false;
+      clearTimeout(reintentoTimer);
+      socket.removeAllListeners();
+      socket.disconnect();
+      clearInterval(timerRef.current);
+      if (master.current === socket) master.current = null;
     };
-  }, []);
+  }, [socketKey]);
+
+  const reintentarConexion = () => {
+    setErrorIA(null);
+    setConnMotivo(null);
+    setConnState("connecting");
+    setSocketKey((k) => k + 1);
+  };
 
   const enviarOrdenGenPregunta = () => {
     const materia = materias.find(
@@ -46,7 +150,14 @@ function QuestionGenerate() {
       subject: materia,
       topic: tema,
       level: level,
+      tipo: tipoExamen,
+      enfoque: tipoExamen === "simulacion" ? "practica" : enfoque,
     };
+    setErrorIA(null);
+    setMsgGuardado(null);
+    setPreguntaGenerada("");
+    setEstadoTitulo("Generando con IA...");
+    iniciarTimer();
     master.current.emit("GenerarPregunta", datos);
   };
 
@@ -54,17 +165,50 @@ function QuestionGenerate() {
     navigate("/dashboard", { state: { activeTab: tab } });
   };
 
-  const iraTabla = () => {
-    navigate("/adminTabla");
+  const buildDatosGuardar = (status) => {
+    const nivel = {
+      Basico: 400,
+      Medio: 800,
+      Avanzado: 1200,
+    };
+    const mat = materias.find(
+      (m) => m.nombre === preguntaGenerada.materia_solicitada,
+    );
+    const tem = temas.find(
+      (t) => t.nombre === preguntaGenerada.tema_solicitado,
+    );
+    if (!mat || !tem) {
+      setErrorIA(
+        "No se pudo guardar: la materia o el tema ya no están en la lista. Vuelve a seleccionar y genera de nuevo.",
+      );
+      return null;
+    }
+    return {
+      materia_solicitada: mat.id,
+      tema_solicitado: tem.id,
+      nivel_solicitado: nivel[preguntaGenerada.nivel_solicitado] || 800,
+      status,
+      tipo: preguntaGenerada.tipo || "ejercicios",
+      enfoque: preguntaGenerada.enfoque || "practica",
+      pregunta: preguntaGenerada.pregunta,
+      opciones: preguntaGenerada.opciones,
+      respuesta_correcta: preguntaGenerada.respuesta_correcta,
+      explicacion: preguntaGenerada.explicacion,
+    };
   };
 
-  const fetch3Preg = async () => {
-    master.current.emit("obtener3BD");
-    master.current.on("3pregObtenidas", (data) => {
-      setPrimeras3preg(data);
-      console.log(data);
-    });
-    console.log("Enviado");
+  const sendQuestion = async () => {
+    const datos = buildDatosGuardar("arppoved");
+    if (!datos) return;
+    setMsgGuardado("Guardando...");
+    master.current.emit("guardarPreguntaBD", datos);
+  };
+
+  const sendQuestionPending = async () => {
+    const datos = buildDatosGuardar("pending_review");
+    if (!datos) return;
+    setMsgGuardado("Guardando...");
+    master.current.emit("guardarPreguntaBD", datos);
   };
 
   const fetchTopics = async (materiaId) => {
@@ -75,85 +219,45 @@ function QuestionGenerate() {
     master.current.emit("obtenerMateriasBD");
   };
 
-  const sendQuestion = async () => {
-    const nivel = {
-      Basico: 400,
-      Medio: 800,
-      Avanzado: 1200,
-    };
-    const datos = {
-      materia_solicitada: materias.find(
-        (m) => m.nombre === preguntaGenerada.materia_solicitada,
-      ).id,
-      tema_solicitado: temas.find(
-        (t) => t.nombre === preguntaGenerada.tema_solicitado,
-      ).id,
-      nivel_solicitado: nivel[preguntaGenerada.nivel_solicitado],
-      status: "arppoved",
-      pregunta: preguntaGenerada.pregunta,
-      opciones: preguntaGenerada.opciones,
-      respuesta_correcta: preguntaGenerada.respuesta_correcta,
-      explicacion: preguntaGenerada.explicacion,
-    };
-
-    master.current.emit("guardarPreguntaBD", datos);
-  };
-
-  const sendQuestionPending = async () => {
-    const nivel = {
-      Basico: 400,
-      Medio: 800,
-      Avanzado: 1200,
-    };
-    const datos = {
-      materia_solicitada: materias.find(
-        (m) => m.nombre === preguntaGenerada.materia_solicitada,
-      ).id,
-      tema_solicitado: temas.find(
-        (t) => t.nombre === preguntaGenerada.tema_solicitado,
-      ).id,
-      nivel_solicitado: nivel[preguntaGenerada.nivel_solicitado],
-      status: "pending_review",
-      pregunta: preguntaGenerada.pregunta,
-      opciones: preguntaGenerada.opciones,
-      respuesta_correcta: preguntaGenerada.respuesta_correcta,
-      explicacion: preguntaGenerada.explicacion,
-    };
-
-    master.current.emit("guardarPreguntaBD", datos);
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/");
   };
 
   useEffect(() => {
+    // Se captura el socket en una constante local: la limpieza usa ESTA
+    // instancia y nunca el ref compartido (que la otra limpieza pone en null).
+    const socket = master.current;
+    if (!socket) return;
     fetchMaterias();
-    fetch3Preg();
-    master.current.on("preguntaGenerada", (data) => {
+    socket.on("preguntaGenerada", (data) => {
       console.log("Pregunta recibida");
 
+      setErrorIA(null);
+      setEstadoTitulo("Listo para Generar");
+      detenerTimer();
       setPreguntaGenerada(data);
     });
 
-    master.current.on("materiasObtenidasBD", (data) => {
+    socket.on("materiasObtenidasBD", (data) => {
       setMaterias(data);
     });
 
-    master.current.on("temasObtenidosBD", (data) => {
+    socket.on("temasObtenidosBD", (data) => {
       setTemas(data);
     });
 
     return () => {
-      master.current.off("preguntaGenerada");
-      master.current.off("materiasObtenidasBD");
+      socket.off("preguntaGenerada");
+      socket.off("materiasObtenidasBD");
+      socket.off("temasObtenidosBD");
     };
   }, []);
   return (
     <div className="dashboard-layout">
       <Sidebar
-        activeTab="aprendizaje"
+        activeTab="admin"
         onTabChange={handleTabChange}
         onLogout={handleLogout}
       />
@@ -170,7 +274,7 @@ function QuestionGenerate() {
             <div className="card">
               <h2>Configuración de IA</h2>
 
-              <label>MATERIA</label>
+              <label>ÁREA DE ESTUDIO</label>
               <select
                 value={selectedMateria}
                 onChange={(e) => {
@@ -223,61 +327,79 @@ function QuestionGenerate() {
                 ))}
               </div>
 
+              <label>TIPO DE REACTIVO</label>
+
+              <div className="level-buttons">
+                {[
+                  { id: "ejercicios", label: "Ejercicios" },
+                  { id: "evaluacion", label: "Examen Evaluación" },
+                  { id: "simulacion", label: "Examen Simulación" },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    className={tipoExamen === item.id ? "active" : ""}
+                    onClick={() => setTipoExamen(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              {tipoExamen !== "simulacion" && (
+                <>
+                  <label>ENFOQUE</label>
+
+                  <div className="level-buttons">
+                    {[
+                      { id: "practica", label: "Práctica" },
+                      { id: "teorica", label: "Teórica" },
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        className={enfoque === item.id ? "active" : ""}
+                        onClick={() => setEnfoque(item.id)}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: "0.8rem", color: "#999", marginTop: 6 }}>
+                    {enfoque === "teorica"
+                      ? "Teórica: pregunta literal del material (definiciones y reglas)."
+                      : "Práctica: problema para resolver, con o sin contexto."}
+                  </p>
+                </>
+              )}
+
               <button
                 className="generate-btn"
+                disabled={generando}
                 onClick={() => {
-                  if (selectedTema && selectedMateria) {
+                  if (selectedTema && selectedMateria && !generando) {
                     enviarOrdenGenPregunta();
                   }
                 }}
               >
-                Generar Pregunta con IA
+                {generando ? `Generando... ${segundos}s` : "Generar Pregunta con IA"}
               </button>
             </div>
-
-            {/* HISTORIAL */}
-            {!socketConnected ? (
-              <div className="preview-content" style={{ minHeight: "400px" }}>
-                <h2 style={{ color: "#e03939" }}>⚠️ Error 404</h2>
-                <p>
-                  Socket no conectado. El servidor Maestro no está disponible.
-                </p>
-                <p style={{ fontSize: "0.85rem", color: "#999" }}>
-                  Asegúrate de que el servidor Socket.io esté corriendo en el
-                  puerto 3001.
-                </p>
-              </div>
-            ) : (
-              <div className="card">
-                <div className="history-header">
-                  <h2> Pendientes de revision</h2>
-                  <span onClick={iraTabla}>Ver todo</span>
-                </div>
-                {!primeras3preg?.length ? (
-                  <p>No hay preguntas</p>
-                ) : (
-                  primeras3preg.map((pregunta) => (
-                    <div className="history-item" key={pregunta.id}>
-                      <small>ID pregunta: {pregunta.id}</small>
-                      <p>Tema: {pregunta.tema_nombre}</p>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
           </div>
 
           {/* RIGHT PANEL */}
           <div className="card">
-            {!socketConnected ? (
+            {connState === "failed" ? (
               <div className="preview-content" style={{ minHeight: "400px" }}>
-                <h2 style={{ color: "#e03939" }}>⚠️ Error 404</h2>
-                <p>
-                  Socket no conectado. El servidor de IA no está disponible.
-                </p>
+                <h2 style={{ color: "#e03939" }}>⚠️ Sin conexión</h2>
+                <p>{connMotivo || "El servidor de IA no está disponible."}</p>
+                <button className="generate-btn" onClick={reintentarConexion}>
+                  Reintentar conexión
+                </button>
+              </div>
+            ) : connState === "connecting" ? (
+              <div className="preview-content" style={{ minHeight: "400px" }}>
+                <h2 style={{ color: "#6f42c1" }}>Conectando al servidor IA…</h2>
                 <p style={{ fontSize: "0.85rem", color: "#999" }}>
-                  Asegúrate de que el servidor Socket.io esté corriendo en el
-                  puerto 3001.
+                  Estableciendo canal con el Master en el puerto 3001.
                 </p>
               </div>
             ) : !preguntaGenerada ? (
@@ -290,7 +412,13 @@ function QuestionGenerate() {
                 </div>
 
                 <div className="preview-content">
-                  <h2> Listo para Generar</h2>
+                  <h2>{estadoTitulo}</h2>
+
+                  {errorIA && (
+                    <p style={{ color: "#e03939", fontWeight: 600 }}>
+                      ⚠️ {errorIA}
+                    </p>
+                  )}
 
                   <p>
                     Ajusta los parámetros a la izquierda y haz clic en el botón
@@ -332,6 +460,15 @@ function QuestionGenerate() {
 
                 <div className="preview-content">
                   <h2>Pregunta Generada</h2>
+                  <p style={{ fontSize: "0.8rem", color: "#999", margin: 0 }}>
+                    {preguntaGenerada.tema_solicitado} ·{" "}
+                    {preguntaGenerada.tipo === "evaluacion"
+                      ? "Evaluación"
+                      : preguntaGenerada.tipo === "simulacion"
+                        ? "Simulación"
+                        : "Ejercicios"}{" "}
+                    · {preguntaGenerada.enfoque === "teorica" ? "Teórica" : "Práctica"}
+                  </p>
                   <div className="header">
                     <small>Pregunta: </small>
 
@@ -357,9 +494,19 @@ function QuestionGenerate() {
                     </div>
                     <div className="question-card">
                       <small>Opciones: </small>
-                      {preguntaGenerada.opciones.map((opcion) => (
-                        <div className="option-card" key={opcion}>
-                          <p>{opcion}</p>
+                      {preguntaGenerada.opciones.map((opcion, idx) => (
+                        <div className="option-card" key={opcion} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                          <strong style={{ color: '#6D3FD1', minWidth: 28 }}>
+                            {"ABCD"[idx] || "•"}&#41;
+                          </strong>
+                          <div style={{ flex: 1 }}>
+                            <ReactMarkdown
+                              remarkPlugins={[remarkMath]}
+                              rehypePlugins={[rehypeKatex]}
+                            >
+                              {opcion}
+                            </ReactMarkdown>
+                          </div>
                         </div>
                       ))}
                       <div className="preview-respuesta">
@@ -375,12 +522,16 @@ function QuestionGenerate() {
                   </div>
                 </div>
                 <div className="content-grid-buttons">
+                  {msgGuardado && (
+                    <p style={{ color: "#fff", fontWeight: 600, gridColumn: "1 / -1", margin: 0 }}>
+                      {msgGuardado}
+                    </p>
+                  )}
                   <div className="">
                     <button
                       className="boton-aprobar"
                       onClick={() => {
                         sendQuestion();
-                        setPreguntaGenerada(null);
                       }}
                     >
                       Aprobar y Guardar
@@ -392,7 +543,6 @@ function QuestionGenerate() {
                     "
                       onClick={() => {
                         sendQuestionPending();
-                        setPreguntaGenerada(null);
                       }}
                     >
                       Marcar para revision

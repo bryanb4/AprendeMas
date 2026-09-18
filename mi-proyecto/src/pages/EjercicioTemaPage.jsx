@@ -1,7 +1,13 @@
 // src/pages/EjercicioTemaPage.jsx
-import React from 'react';
+// PLANTILLA única de práctica por tema. Ruta: /ejercicios/:materia/:temaIdx
+// Muestra los ejercicios aprobados del tema con corrección inmediata.
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import { apiObtenerEjercicios } from '../services/api.js';
 
 // Mismo catálogo que DashboardPage, para resolver /ejercicios/:materia/:temaIdx
 const CATALOGO = {
@@ -70,8 +76,55 @@ function EjercicioTemaPage() {
   const idx = parseInt(temaIdx, 10);
   const temaNombre = entry && Number.isInteger(idx) ? entry.temas[idx] : null;
 
+  const [fase, setFase] = useState('cargando');
+  const [ejercicios, setEjercicios] = useState([]);
+  const [respuestas, setRespuestas] = useState({});
+  const [error, setError] = useState(null);
+
   const handleTabChange = (tab) => navigate('/dashboard', { state: { activeTab: tab } });
-  const handleLogout = () => { localStorage.removeItem('token'); navigate('/'); };
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('avatar');
+    navigate('/');
+  };
+
+  useEffect(() => {
+    if (!entry || !temaNombre) {
+      setError('Tema no encontrado.');
+      setFase('listo');
+      return;
+    }
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Inicia sesión para practicar.');
+      setFase('listo');
+      return;
+    }
+    apiObtenerEjercicios(token, entry.nombre, temaNombre)
+      .then((data) => {
+        setEjercicios(data.ejercicios || []);
+        setFase('listo');
+      })
+      .catch((err) => {
+        setError(err.message);
+        setFase('listo');
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const responder = (id, opcion) => {
+    setRespuestas((prev) => (prev[id] !== undefined ? prev : { ...prev, [id]: opcion }));
+  };
+
+  const correctas = ejercicios.filter((e) => respuestas[e.id] !== undefined && respuestas[e.id] === e.respuesta_correcta).length;
+  const respondidas = ejercicios.filter((e) => respuestas[e.id] !== undefined).length;
+
+  const md = (texto) => (
+    <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+      {String(texto || '')}
+    </ReactMarkdown>
+  );
 
   return (
     <div className="dashboard-layout">
@@ -81,19 +134,114 @@ function EjercicioTemaPage() {
           ← Volver a ejercicios
         </button>
 
-        <div className="contenido-card" style={{ textAlign: 'center', padding: '60px 40px' }}>
-          <div style={{ fontSize: '3.5rem' }}>{entry ? entry.icon : '🚧'}</div>
-          <h1 className="titulo-seccion" style={{ marginTop: 16 }}>
+        <div className="contenido-card" style={{ textAlign: 'center', padding: '32px 40px', marginBottom: 24 }}>
+          <div style={{ fontSize: '2.5rem' }}>{entry ? entry.icon : '🚧'}</div>
+          <h1 className="titulo-seccion" style={{ marginTop: 8 }}>
             {temaNombre ? temaNombre : 'Tema no encontrado'}
           </h1>
-          {entry && temaNombre && <p style={{ color: '#764ba2', fontWeight: 600 }}>{entry.nombre}</p>}
-          <hr className="divisor" />
-          <h2 style={{ color: '#1a1b3a' }}>🚧 Página en creación</h2>
-          <p className="descripcion" style={{ textAlign: 'center' }}>
-            Vista aún no obtenida. Aquí podrás resolver los ejercicios de este tema cuando estén disponibles.
-          </p>
-          <p className="nota">Espacio reservado: /ejercicios/{materiaKey || '...'} /{Number.isInteger(idx) ? idx : '...'}</p>
+          {entry && temaNombre && (
+            <p style={{ color: '#764ba2', fontWeight: 600, margin: 0 }}>
+              {entry.nombre} · Practica a tu ritmo, sin tiempo ni calificación
+            </p>
+          )}
         </div>
+
+        {fase === 'cargando' && (
+          <div className="contenido-card" style={{ textAlign: 'center' }}>
+            <p>Cargando ejercicios…</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="contenido-card" style={{ borderLeft: '4px solid #e03939', marginBottom: 16 }}>
+            <p style={{ color: '#c62828', fontWeight: 600, margin: 0 }}>⚠️ {error}</p>
+          </div>
+        )}
+
+        {fase === 'listo' && ejercicios.length === 0 && !error && (
+          <div className="contenido-card" style={{ textAlign: 'center' }}>
+            <p>Aún no hay ejercicios aprobados para este tema. Vuelve pronto.</p>
+          </div>
+        )}
+
+        {fase === 'listo' && ejercicios.length > 0 && (
+          <>
+            <div className="contenido-card" style={{ padding: '14px 28px', marginBottom: 16 }}>
+              <strong style={{ color: '#5f3b85' }}>
+                ✅ {correctas} correctas · 📝 {respondidas}/{ejercicios.length} intentados
+              </strong>
+            </div>
+            {ejercicios.map((e, i) => {
+              const resp = respuestas[e.id];
+              const ya = resp !== undefined;
+              const bien = ya && resp === e.respuesta_correcta;
+              return (
+                <div
+                  className="contenido-card"
+                  key={e.id}
+                  style={{
+                    marginBottom: 16,
+                    textAlign: 'left',
+                    borderLeft: `4px solid ${!ya ? '#ede7f6' : bien ? '#2e9e5b' : '#e03939'}`,
+                  }}
+                >
+                  <p style={{ fontWeight: 700, color: '#5f3b85', marginTop: 0 }}>
+                    Ejercicio {i + 1} de {ejercicios.length}
+                    {e.enfoque === 'teorica' ? ' · 📖 Teórico' : ' · 🧮 Práctico'}
+                  </p>
+                  <div style={{ fontSize: '1.05rem', marginBottom: 12 }}>{md(e.pregunta)}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {(e.opciones || []).map((op, idx) => {
+                        const esElegida = resp === op;
+                        const esCorrecta = op === e.respuesta_correcta;
+                        return (
+                          <button
+                            key={op}
+                            onClick={() => responder(e.id, op)}
+                            disabled={ya}
+                            style={{
+                              textAlign: 'left',
+                              padding: '10px 16px',
+                              borderRadius: 12,
+                              border: ya && esCorrecta
+                                ? '2px solid #2e9e5b'
+                                : ya && esElegida
+                                  ? '2px solid #e03939'
+                                  : '2px solid #ede7f6',
+                              background: ya && esCorrecta ? '#e8f7ee' : ya && esElegida ? '#fdecec' : 'white',
+                              cursor: ya ? 'default' : 'pointer',
+                              fontSize: '0.95rem',
+                              display: 'flex',
+                              gap: 10,
+                              alignItems: 'flex-start',
+                            }}
+                          >
+                            <strong style={{ color: '#5f3b85', minWidth: 24 }}>
+                              {"ABCD"[idx] || "•"}&#41;
+                            </strong>
+                            <span style={{ flex: 1 }}>{md(op)}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  {ya && (
+                    <div style={{ marginTop: 10 }}>
+                      <p style={{ fontWeight: 700, color: bien ? '#2e9e5b' : '#c62828', margin: '4px 0' }}>
+                        {bien ? '✅ ¡Correcto!' : '❌ Casi… revisa la explicación'}
+                      </p>
+                      {e.explicacion && (
+                        <div style={{ color: '#444', background: '#faf8ff', borderRadius: 12, padding: '10px 16px' }}>
+                          <strong>Explicación: </strong>
+                          {md(e.explicacion)}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </>
+        )}
       </main>
 
       <style>{`

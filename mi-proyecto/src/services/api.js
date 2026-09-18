@@ -1,61 +1,160 @@
 // src/services/api.js
+// Cliente real del backend Express (antes eran mocks en memoria)
 
-// Este archivo simula las llamadas a tu backend
-// Usamos un 'setTimeout' para simular la demora de la red
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
-// Una base de datos falsa
-const FAKE_USERS = [
-  { id: 1, email: 'user@test.com', password: '123' } // Nunca hagas esto en la vida real
-];
+async function handleRes(res) {
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data.message || "Error en el servidor");
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
+  return data;
+}
 
-/**
- * Simula una petición de Login
- * @param {string} email
- * @param {string} password
- * @returns {Promise}
- */
-export const mockLogin = (email, password) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const user = FAKE_USERS.find(u => u.email === email && u.password === password);
-      
-      if (user) {
-        console.log("Mock API: Login exitoso para", email);
-        // El backend real devolvería un "token"
-        resolve({
-          status: 'ok',
-          token: 'fake-jwt-token-123456', 
-          user: { id: user.id, email: user.email }
-        });
-      } else {
-        console.log("Mock API: Fallo de login para", email);
-        reject(new Error('Credenciales inválidas'));
-      }
-    }, 1000); // Simula 1 segundo de espera
+export async function apiRegister(userData) {
+  const res = await fetch(`${API_URL}/api/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
   });
+  return handleRes(res);
+}
+
+export async function apiLogin(email, password) {
+  const res = await fetch(`${API_URL}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  return handleRes(res);
+}
+
+export async function apiVerifyEmail(token) {
+  const res = await fetch(`${API_URL}/api/auth/verify?token=${encodeURIComponent(token)}`);
+  return handleRes(res);
+}
+
+export async function apiResendVerification(email) {
+  const res = await fetch(`${API_URL}/api/auth/resend-verification`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  return handleRes(res);
+}
+
+export async function apiGetProfile(token) {
+  const res = await fetch(`${API_URL}/api/auth/profile`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleRes(res);
+}
+
+export async function apiUpdateProfile(token, data) {
+  const res = await fetch(`${API_URL}/api/auth/profile`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+  return handleRes(res);
+}
+
+export async function apiChangePassword(token, passwordActual, passwordNueva) {
+  const res = await fetch(`${API_URL}/api/auth/profile/password`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ passwordActual, passwordNueva }),
+  });
+  return handleRes(res);
+}
+
+// ---- Examen de evaluación por tema ----
+export async function apiObtenerEvaluacion(token, materia, tema) {
+  const q = new URLSearchParams({ materia, tema }).toString();
+  const res = await fetch(`${API_URL}/api/examen/evaluacion?${q}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleRes(res);
+}
+
+export async function apiCalificarEvaluacion(token, respuestas, tema_id = null) {
+  const res = await fetch(`${API_URL}/api/examen/evaluacion/calificar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ respuestas, tema_id }),
+  });
+  return handleRes(res);
+}
+
+export async function apiObtenerProgreso(token) {
+  const res = await fetch(`${API_URL}/api/examen/progreso`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleRes(res);
+}
+
+export async function apiObtenerHistorial(token) {
+  const res = await fetch(`${API_URL}/api/examen/historial`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleRes(res);
+}
+
+// ---- Ejercicios de práctica por tema (con respuestas: feedback inmediato) ----
+export async function apiObtenerEjercicios(token, materia, tema) {
+  const q = new URLSearchParams({ materia, tema }).toString();
+  const res = await fetch(`${API_URL}/api/examen/ejercicios?${q}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleRes(res);
+}
+
+// ---- Examen de simulación (solo temas aprobados) ----
+export async function apiObtenerSimulacion(token, n = 20) {
+  const res = await fetch(`${API_URL}/api/examen/simulacion?n=${n}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleRes(res);
+}
+
+export async function apiCalificarSimulacion(token, respuestas) {
+  const res = await fetch(`${API_URL}/api/examen/simulacion/calificar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ respuestas }),
+  });
+  return handleRes(res);
+}
+
+export async function apiEstadoSimulacion(token) {
+  const res = await fetch(`${API_URL}/api/examen/simulacion/estado`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleRes(res);
+}
+
+export function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("avatar");
+}
+
+// Compatibilidad: HomePage y RegisterPage importaban mockLogin/mockRegister.
+// Ahora apuntan al backend real.
+export const mockLogin = (email, password) => apiLogin(email, password);
+
+// RegisterPage actual llama mockRegister(userData, password).
+// Aceptamos ambas firmas: objeto completo o (email, password).
+export const mockRegister = (userDataOrEmail, password) => {
+  if (typeof userDataOrEmail === "object") {
+    const data = { ...userDataOrEmail };
+    if (password && !data.password) data.password = password;
+    return apiRegister(data);
+  }
+  return apiRegister({ email: userDataOrEmail, password });
 };
 
-/**
- * Simula una petición de Registro
- * @param {string} email
- * @param {string} password
- * @returns {Promise}
- */
-export const mockRegister = (email, password) => {
-   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (FAKE_USERS.find(u => u.email === email)) {
-        console.log("Mock API: Email ya registrado", email);
-        reject(new Error('El correo ya está en uso'));
-      } else {
-        const newUser = { id: FAKE_USERS.length + 1, email, password };
-        FAKE_USERS.push(newUser);
-        console.log("Mock API: Registro exitoso para", email, FAKE_USERS);
-        resolve({
-          status: 'ok',
-          user: { id: newUser.id, email: newUser.email }
-        });
-      }
-    }, 1000);
-  });
-};
+export { API_URL };

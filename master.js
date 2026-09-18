@@ -44,17 +44,22 @@ function mapPregunta(r) {
     rating: r.rating,
     nivel: r.nivel,
     tipo: r.tipo,
+    enfoque: r.enfoque || "practica",
   };
 }
 
 const SELECT_PREGUNTAS = `
-  SELECT p.id, p.materia_id, p.tema_id, p.nivel, p.tipo,
+  SELECT p.id, p.materia_id, p.tema_id, p.nivel, p.tipo, p.enfoque,
          p.pregunta, p.opciones, p.respuesta_correcta, p.explicacion,
          p.status, p.rating,
          m.nombre AS materia_nombre, t.nombre AS tema_nombre
   FROM preguntas p
   LEFT JOIN materias m ON m.id = p.materia_id
   LEFT JOIN temas t ON t.id = p.tema_id`;
+
+function normalizarEnfoque(e) {
+  return e === "teorica" ? "teorica" : "practica";
+}
 
 function normalizarStatus(s) {
   if (s === "arppoved") return "approved"; // typo histórico del front
@@ -166,14 +171,21 @@ io.on("connection", (socket) => {
         topic: datos.topic,
         level: datos.level,
         tipo: datos.tipo || "ejercicios",
+        enfoque: normalizarEnfoque(datos.enfoque),
         tema_id: temaId,
+        forzar: datos.forzar === true,
+        evitar: Array.isArray(datos.evitar) ? datos.evitar.slice(0, 12) : [],
       });
       if (!resp || !resp.ok) {
         return socket.emit("errorIA", {
           message: (resp && resp.error) || "El worker no pudo generar la pregunta",
         });
       }
-      socket.emit("preguntaGenerada", { ...resp.pregunta, tipo: datos.tipo || "ejercicios" });
+      socket.emit("preguntaGenerada", {
+        ...resp.pregunta,
+        tipo: datos.tipo || "ejercicios",
+        enfoque: normalizarEnfoque(datos.enfoque),
+      });
     } catch (err) {
       socket.emit("errorIA", { message: "El worker tardó demasiado o se desconectó" });
     }
@@ -184,13 +196,14 @@ io.on("connection", (socket) => {
     try {
       const r = await pool.query(
         `INSERT INTO preguntas
-         (materia_id, tema_id, nivel, tipo, pregunta, opciones, respuesta_correcta, explicacion, status, created_by)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id`,
+         (materia_id, tema_id, nivel, tipo, enfoque, pregunta, opciones, respuesta_correcta, explicacion, status, created_by)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
         [
           Number(d.materia_solicitada),
           Number(d.tema_solicitado),
           Number(d.nivel_solicitado) || 800,
           ["evaluacion", "simulacion", "ejercicios"].includes(d.tipo) ? d.tipo : "ejercicios",
+          normalizarEnfoque(d.enfoque),
           d.pregunta,
           JSON.stringify(d.opciones || []),
           d.respuesta_correcta,
@@ -236,6 +249,23 @@ io.on("connection", (socket) => {
     );
     const r = await pool.query(`${SELECT_PREGUNTAS} WHERE p.id=$1`, [id]);
     if (r.rows.length) socket.emit("preguntaPatched", mapPregunta(r.rows[0]));
+  }));
+
+  socket.on("eliminarPreguntaBD", soloAdmin(async ({ id } = {}) => {
+    const numId = Number(id);
+    if (!numId) {
+      return socket.emit("errorEliminar", { message: "ID de pregunta inválido" });
+    }
+    try {
+      const r = await pool.query("DELETE FROM preguntas WHERE id = $1 RETURNING id", [numId]);
+      if (!r.rows.length) {
+        return socket.emit("errorEliminar", { message: "La pregunta ya no existe" });
+      }
+      socket.emit("preguntaEliminada", { id: numId });
+    } catch (err) {
+      console.error("[master] Error eliminando pregunta:", err.message);
+      socket.emit("errorEliminar", { message: "No se pudo eliminar: " + err.message });
+    }
   }));
 
   socket.on("disconnect", () => {
