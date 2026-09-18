@@ -12,20 +12,6 @@ import GeometriaPage from './pages/GeometriaPage.jsx';
 import EstadisticaPage from './pages/EstadisticaPage.jsx';
 import GenerarPreguntas from './pages/GenerarPreguntaIA.jsx';
 import PaginaTablas from './pages/Preguntas_BD.jsx';
-import VerifyEmail from './pages/VerifyEmail.jsx';
-
-function isAdmin() {
-  try {
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
-    return localStorage.getItem('token') !== null && user?.rol === 'admin';
-  } catch {
-    return false;
-  }
-}
-
-function RequireAdmin({ children }) {
-  return isAdmin() ? children : <Navigate to="/" replace />;
-}
 
 function App() {
   return (
@@ -38,9 +24,8 @@ function App() {
         <Route path="/algebra" element={<AlgebraPage />} />
         <Route path="/geometria" element={<GeometriaPage />} />
         <Route path="/estadistica" element={<EstadisticaPage />} />
-        <Route path="/adminIA" element={<RequireAdmin><GenerarPreguntas /></RequireAdmin>} />
-        <Route path="/adminTabla" element={<RequireAdmin><PaginaTablas /></RequireAdmin>} />
-        <Route path="/verify" element={<VerifyEmail />} />
+        <Route path="/adminIA" element={<GenerarPreguntas />} />
+        <Route path="/adminTabla" element={<PaginaTablas />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

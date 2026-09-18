@@ -17,7 +17,6 @@ function EstadisticaPage() {
   const handleTabChange = (tab) => navigate('/dashboard', { state: { activeTab: tab } });
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
     navigate('/');
   };
 
