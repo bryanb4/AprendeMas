@@ -15,6 +15,7 @@ import PaginaTablas from './pages/Preguntas_BD.jsx';
 import ExamenSimulacionPage from './pages/ExamenSimulacionPage.jsx';
 import EjercicioTemaPage from './pages/EjercicioTemaPage.jsx';
 import EvaluacionTemaPage from './pages/EvaluacionTemaPage.jsx';
+<<<<<<< HEAD
 import VerifyEmail from './pages/VerifyEmail.jsx';
 
 function isAdmin() {
@@ -29,6 +30,8 @@ function isAdmin() {
 function RequireAdmin({ children }) {
   return isAdmin() ? children : <Navigate to="/" replace />;
 }
+=======
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
 
 function App() {
   return (
@@ -41,9 +44,14 @@ function App() {
         <Route path="/algebra" element={<AlgebraPage />} />
         <Route path="/geometria" element={<GeometriaPage />} />
         <Route path="/estadistica" element={<EstadisticaPage />} />
+<<<<<<< HEAD
         <Route path="/adminIA" element={<RequireAdmin><GenerarPreguntas /></RequireAdmin>} />
         <Route path="/adminTabla" element={<RequireAdmin><PaginaTablas /></RequireAdmin>} />
         <Route path="/verify" element={<VerifyEmail />} />
+=======
+        <Route path="/adminIA" element={<GenerarPreguntas />} />
+        <Route path="/adminTabla" element={<PaginaTablas />} />
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
         <Route path="/examen-simulacion" element={<ExamenSimulacionPage />} />
         <Route path="/ejercicios/:materia/:temaIdx" element={<EjercicioTemaPage />} />
         <Route path="/evaluacion/:materia/:temaIdx" element={<EvaluacionTemaPage />} />

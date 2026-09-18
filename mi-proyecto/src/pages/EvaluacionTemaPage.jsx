@@ -1,4 +1,5 @@
 // src/pages/EvaluacionTemaPage.jsx
+<<<<<<< HEAD
 // PLANTILLA única del examen de evaluación por tema.
 // Ruta: /evaluacion/:materia/:temaIdx (los botones "Comenzar examen
 // evaluación" al final de cada tema navegan aquí).
@@ -10,6 +11,11 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { apiObtenerEvaluacion, apiCalificarEvaluacion } from '../services/api.js';
+=======
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
 
 const CATALOGO = {
   aritmetica: {
@@ -77,6 +83,7 @@ function EvaluacionTemaPage() {
   const idx = parseInt(temaIdx, 10);
   const temaNombre = entry && Number.isInteger(idx) ? entry.temas[idx] : null;
 
+<<<<<<< HEAD
   const [fase, setFase] = useState('cargando'); // cargando | examen | calificando | resultado
   const [preguntas, setPreguntas] = useState([]);
   const [temaId, setTemaId] = useState(null);
@@ -162,11 +169,16 @@ function EvaluacionTemaPage() {
       {String(texto || '')}
     </ReactMarkdown>
   );
+=======
+  const handleTabChange = (tab) => navigate('/dashboard', { state: { activeTab: tab } });
+  const handleLogout = () => { localStorage.removeItem('token'); navigate('/'); };
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
 
   return (
     <div className="dashboard-layout">
       <Sidebar activeTab="aprendizaje" onTabChange={handleTabChange} onLogout={handleLogout} />
       <main className="main-content">
+<<<<<<< HEAD
         <button className="btn-volver" onClick={volverALeccion}>
           ← Volver a la lección
         </button>
@@ -346,6 +358,25 @@ function EvaluacionTemaPage() {
             ))}
           </>
         )}
+=======
+        <button className="btn-volver" onClick={() => navigate('/dashboard', { state: { activeTab: 'aprendizaje' } })}>
+          ← Volver a aprendizaje
+        </button>
+
+        <div className="contenido-card" style={{ textAlign: 'center', padding: '60px 40px' }}>
+          <div style={{ fontSize: '3.5rem' }}>{entry ? '📝' : '🚧'}</div>
+          <h1 className="titulo-seccion" style={{ marginTop: 16 }}>
+            {temaNombre ? `Evaluación · ${temaNombre}` : 'Tema no encontrado'}
+          </h1>
+          {entry && temaNombre && <p style={{ color: '#764ba2', fontWeight: 600 }}>{entry.nombre} · Examen teórico</p>}
+          <hr className="divisor" />
+          <h2 style={{ color: '#1a1b3a' }}>🚧 Página en creación</h2>
+          <p className="descripcion" style={{ textAlign: 'center' }}>
+            Vista aún no obtenida. Aquí podrás comenzar el examen teórico de este tema cuando esté disponible.
+          </p>
+          <p className="nota">Espacio reservado: /evaluacion/{materiaKey || '...'} /{Number.isInteger(idx) ? idx : '...'}</p>
+        </div>
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
       </main>
 
       <style>{`

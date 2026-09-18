@@ -173,7 +173,11 @@ function DashboardPage() {
               </p>
               <button
                 className="btn-card-action btn-comenzar"
+<<<<<<< HEAD
                 onClick={() => navigate('/examen-simulacion', { state: { autostart: true } })}
+=======
+                onClick={() => console.log('Comenzar examen simulación')}
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
               >
                 Comenzar con el examen simulación →
               </button>
@@ -192,6 +196,48 @@ function DashboardPage() {
                 <li>Guía de preparación interna. Verifica siempre la convocatoria oficial UDG para reglas definitivas.</li>
               </ul>
             </div>
+<<<<<<< HEAD
+=======
+          </div>
+        )}
+
+        {activeTab === 'ejercicios' && (
+          <div className="animate-fade-in">
+            <section className="progress-banner">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <div style={{ fontSize: '2rem' }}>✏️</div>
+                <div>
+                  <h2 style={{ margin: 0 }}>Ejercicios por tema</h2>
+                  <p style={{ margin: 0, opacity: 0.9 }}>Elige un tema y practica con ejercicios</p>
+                </div>
+              </div>
+            </section>
+
+            {ejerciciosPorMateria.map((materia) => (
+              <div key={materia.id} className="ejercicio-bloque">
+                <div className="ejercicio-header">
+                  <span className="icon-box-sm">{materia.icon}</span>
+                  <div>
+                    <h3 style={{ margin: 0 }}>{materia.nombre}</h3>
+                    <small style={{ color: '#666' }}>{materia.temas.length} temas</small>
+                  </div>
+                </div>
+                <ul className="topic-list">
+                  {materia.temas.map((tema, idx) => (
+                    <li key={tema} className="topic-item">
+                      <span className="topic-name">{tema}</span>
+                      <button
+                        className="btn-start-topic"
+                        onClick={() => navigate(`/ejercicios/${materia.slug}/${idx}`)}
+                      >
+                        Practicar
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
           </div>
         )}
 

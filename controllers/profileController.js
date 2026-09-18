@@ -8,7 +8,11 @@ exports.getProfile = async (req, res) => {
     const userId = req.user.id;
 
     const result = await pool.query(
+<<<<<<< HEAD
       `SELECT nombre, primer_apellido, segundo_apellido,
+=======
+      `SELECT nombres, primer_apellido, segundo_apellido,
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
        fecha_nacimiento, email, institucion, avatar
        FROM usuarios WHERE id=$1`,
       [userId]
@@ -38,8 +42,11 @@ exports.updateProfile = async (req, res) => {
       avatar
     } = req.body;
 
+<<<<<<< HEAD
     const nombreFinal = nombre || nombres;
 
+=======
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
     if (avatar !== undefined) {
       await pool.query(
         `UPDATE usuarios SET avatar=$1 WHERE id=$2`,
@@ -47,15 +54,26 @@ exports.updateProfile = async (req, res) => {
       );
     }
 
+<<<<<<< HEAD
     if (nombreFinal !== undefined) {
       await pool.query(
         `UPDATE usuarios
          SET nombre=$1,
+=======
+    if (nombres !== undefined) {
+      await pool.query(
+        `UPDATE usuarios
+         SET nombres=$1,
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
          primer_apellido=$2,
          segundo_apellido=$3,
          fecha_nacimiento=$4
          WHERE id=$5`,
+<<<<<<< HEAD
         [nombreFinal, primerApellido, segundoApellido, fechaNacimiento, userId]
+=======
+        [nombres, primerApellido, segundoApellido, fechaNacimiento, userId]
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
       );
     }
 

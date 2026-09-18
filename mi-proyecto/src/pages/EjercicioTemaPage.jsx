@@ -1,4 +1,5 @@
 // src/pages/EjercicioTemaPage.jsx
+<<<<<<< HEAD
 // PLANTILLA única de práctica por tema. Ruta: /ejercicios/:materia/:temaIdx
 // Muestra los ejercicios aprobados del tema con corrección inmediata.
 import React, { useState, useEffect } from 'react';
@@ -8,6 +9,11 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { apiObtenerEjercicios } from '../services/api.js';
+=======
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
 
 // Mismo catálogo que DashboardPage, para resolver /ejercicios/:materia/:temaIdx
 const CATALOGO = {
@@ -76,6 +82,7 @@ function EjercicioTemaPage() {
   const idx = parseInt(temaIdx, 10);
   const temaNombre = entry && Number.isInteger(idx) ? entry.temas[idx] : null;
 
+<<<<<<< HEAD
   const [fase, setFase] = useState('cargando');
   const [ejercicios, setEjercicios] = useState([]);
   const [respuestas, setRespuestas] = useState({});
@@ -125,6 +132,10 @@ function EjercicioTemaPage() {
       {String(texto || '')}
     </ReactMarkdown>
   );
+=======
+  const handleTabChange = (tab) => navigate('/dashboard', { state: { activeTab: tab } });
+  const handleLogout = () => { localStorage.removeItem('token'); navigate('/'); };
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
 
   return (
     <div className="dashboard-layout">
@@ -134,6 +145,7 @@ function EjercicioTemaPage() {
           ← Volver a ejercicios
         </button>
 
+<<<<<<< HEAD
         <div className="contenido-card" style={{ textAlign: 'center', padding: '32px 40px', marginBottom: 24 }}>
           <div style={{ fontSize: '2.5rem' }}>{entry ? entry.icon : '🚧'}</div>
           <h1 className="titulo-seccion" style={{ marginTop: 8 }}>
@@ -242,6 +254,21 @@ function EjercicioTemaPage() {
             })}
           </>
         )}
+=======
+        <div className="contenido-card" style={{ textAlign: 'center', padding: '60px 40px' }}>
+          <div style={{ fontSize: '3.5rem' }}>{entry ? entry.icon : '🚧'}</div>
+          <h1 className="titulo-seccion" style={{ marginTop: 16 }}>
+            {temaNombre ? temaNombre : 'Tema no encontrado'}
+          </h1>
+          {entry && temaNombre && <p style={{ color: '#764ba2', fontWeight: 600 }}>{entry.nombre}</p>}
+          <hr className="divisor" />
+          <h2 style={{ color: '#1a1b3a' }}>🚧 Página en creación</h2>
+          <p className="descripcion" style={{ textAlign: 'center' }}>
+            Vista aún no obtenida. Aquí podrás resolver los ejercicios de este tema cuando estén disponibles.
+          </p>
+          <p className="nota">Espacio reservado: /ejercicios/{materiaKey || '...'} /{Number.isInteger(idx) ? idx : '...'}</p>
+        </div>
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
       </main>
 
       <style>{`

@@ -19,6 +19,23 @@ const AVATARES = [
   '/avatars/14NaranjosoAvatar.png',
 ];
 
+const AVATARES = [
+  '/avatars/1PerroAvatar.png',
+  '/avatars/2HamsterAvatar.png',
+  '/avatars/3PuercoespinAvatar.png',
+  '/avatars/4GatoAvatarr.png',
+  '/avatars/5Hamster2Avatar.png',
+  '/avatars/6RataAvatar.png',
+  '/avatars/7Perro2Avatar.png',
+  '/avatars/8PericoAvatar.png',
+  '/avatars/9PezAvatar.png',
+  '/avatars/10TortugaAvatar.png',
+  '/avatars/11CamaleonAvatar.png',
+  '/avatars/12ConejoAvatar.png',
+  '/avatars/13PerrosalchichaAvatar.png',
+  '/avatars/14NaranjosoAvatar.png',
+];
+
 const PerfilView = () => {
   const [formData, setFormData] = useState({
     nombres: '',
@@ -29,6 +46,7 @@ const PerfilView = () => {
     passwordNueva: '',
     passwordConfirmar: '',
   });
+<<<<<<< HEAD
   const [email, setEmail] = useState('');
   const [institucion, setInstitucion] = useState('');
   const [loading, setLoading] = useState(true);
@@ -70,6 +88,11 @@ const PerfilView = () => {
       .catch((err) => setLoadError(err.message))
       .finally(() => setLoading(false));
   }, []);
+=======
+  const [avatar, setAvatar] = useState(() => localStorage.getItem('avatar') || '');
+  const [avatarTemp, setAvatarTemp] = useState(avatar);
+  const [showSelector, setShowSelector] = useState(false);
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -118,6 +141,7 @@ const PerfilView = () => {
 
   const handleGuardarAvatar = async () => {
     if (!avatarTemp) return;
+<<<<<<< HEAD
     setMsgAvatar(null);
     setSavingAvatar(true);
     try {
@@ -148,6 +172,26 @@ const PerfilView = () => {
     return <div className="perfil-view animate-fade-in"><p style={{ color: 'red' }}>{loadError}</p></div>;
   }
 
+=======
+    setAvatar(avatarTemp);
+    localStorage.setItem('avatar', avatarTemp);
+    setShowSelector(false);
+    // Intento de persistir en backend (si hay token y endpoint)
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch('/api/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', authorization: token },
+          body: JSON.stringify({ avatar: avatarTemp }),
+        });
+      }
+    } catch {
+      // Sin backend: queda solo en localStorage
+    }
+  };
+
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
   return (
     <div className="perfil-view animate-fade-in">
       <style>{`
@@ -367,6 +411,7 @@ const PerfilView = () => {
                 ))}
               </div>
               <div className="avatar-actions">
+<<<<<<< HEAD
                 <button className="btn-solid-purple" style={{ padding: '10px 20px', fontSize: 14 }} onClick={handleGuardarAvatar} disabled={savingAvatar}>
                   {savingAvatar ? 'Guardando...' : 'Guardar avatar'}
                 </button>
@@ -376,6 +421,12 @@ const PerfilView = () => {
                   {msgAvatar.text}
                 </p>
               )}
+=======
+                <button className="btn-solid-purple" style={{ padding: '10px 20px', fontSize: 14 }} onClick={handleGuardarAvatar}>
+                  Guardar avatar
+                </button>
+              </div>
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
             </div>
           )}
 

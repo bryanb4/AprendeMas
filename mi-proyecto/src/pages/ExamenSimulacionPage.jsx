@@ -1,4 +1,5 @@
 // src/pages/ExamenSimulacionPage.jsx
+<<<<<<< HEAD
 // Simulacro Piense II: solo preguntas de temas APROBADOS (bandera de
 // sección), con temporizador real. El backend arma 20 reactivos 30/50/20.
 import React, { useState, useEffect, useRef } from 'react';
@@ -25,6 +26,14 @@ function ExamenSimulacionPage() {
   const [segundos, setSegundos] = useState(0);
   const timerRef = useRef(null);
   const enviandoRef = useRef(false);
+=======
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+
+function ExamenSimulacionPage() {
+  const navigate = useNavigate();
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
 
   const handleTabChange = (tab) => {
     navigate('/dashboard', { state: { activeTab: tab } });
@@ -32,6 +41,7 @@ function ExamenSimulacionPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+<<<<<<< HEAD
     localStorage.removeItem('user');
     localStorage.removeItem('avatar');
     navigate('/');
@@ -140,6 +150,17 @@ function ExamenSimulacionPage() {
     </ReactMarkdown>
   );
 
+=======
+    navigate('/');
+  };
+
+  const handleComenzar = () => {
+    // El backend armará el examen solo con lo desbloqueado en orden:
+    // 1 Aritmética -> 2 Álgebra -> 3 Geometría -> 4 Estadística
+    console.log('Comenzar examen simulación');
+  };
+
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
   return (
     <div className="dashboard-layout">
       <Sidebar activeTab="simulacion" onTabChange={handleTabChange} onLogout={handleLogout} />
@@ -159,6 +180,7 @@ function ExamenSimulacionPage() {
           </div>
         </section>
 
+<<<<<<< HEAD
         {error && (
           <div className="contenido-card" style={{ borderLeft: '4px solid #e03939', marginBottom: 16 }}>
             <p style={{ color: '#c62828', fontWeight: 600, margin: 0 }}>⚠️ {error}</p>
@@ -378,6 +400,34 @@ function ExamenSimulacionPage() {
             ))}
           </>
         )}
+=======
+        <div className="contenido-card">
+          <h1 className="titulo-seccion">Comenzar con el examen simulación</h1>
+          <hr className="divisor" />
+          <p className="descripcion">
+            El examen simulacion solo podria asignarte preguntas de los temmas que hayas desbloqueado en orden: Aritmética, Álgebra, Geometría y Estadística.
+            Es importante que sigas el orden de desbloqueo para obtener una experiencia de práctica más efectiva y realista.
+          </p>
+
+          <button className="btn-card-action btn-comenzar" onClick={handleComenzar}>
+            Comenzar con el examen simulación →
+          </button>
+        </div>
+
+        <div className="contenido-card" style={{ marginTop: 24 }}>
+          <h1 className="titulo-seccion">Reglas y recomendaciones · Piense II</h1>
+          <hr className="divisor" />
+          <ul className="reglas-list">
+            <li><strong>Llega temprano con tu cita y una identificación con foto.</strong> Sin registro no hay ingreso al examen real.</li>
+            <li><strong>Lleva lápiz del No. 2, goma y sacapuntas.</strong> Normalmente no se permite calculadora ni celular en el aula.</li>
+            <li><strong>Administra tu tiempo por sección.</strong> No te estanques: marca la difícil, avanza y regresa si te sobra tiempo.</li>
+            <li><strong>Lee cada pregunta completa antes de ver opciones.</strong> El Piense II mide razonamiento, no solo memoria.</li>
+            <li><strong>Contesta todo.</strong> Elimina 1-2 opciones y elige la más lógica, no dejes en blanco en tu práctica.</li>
+            <li><strong>Avanza en orden:</strong> domina Aritmética antes de esperar ver Álgebra en tu simulación.</li>
+          </ul>
+          <p className="nota">Guía de preparación interna. Verifica siempre la convocatoria oficial UDG para reglas definitivas.</p>
+        </div>
+>>>>>>> 416baaf497d1c56124981100d6c4244b708402fa
       </main>
 
       <style>{`
