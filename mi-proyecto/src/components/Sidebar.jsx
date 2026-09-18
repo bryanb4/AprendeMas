@@ -4,7 +4,7 @@ import React from 'react';
 function Sidebar({ activeTab, onTabChange, onLogout }) {
   return (
     <aside className="sidebar">
-      <div className="sidebar-logo">🎓 ExamenDone</div>
+      <div className="sidebar-logo sidebar-logo-click" onClick={() => onTabChange('aprendizaje')} title="Ir a Aprendizaje">🎓 Aprende<span className="logo-plus">+</span></div>
       <ul className="sidebar-menu">
         <li
           className={`menu-item ${activeTab === 'perfil' ? 'active' : ''}`}
@@ -17,6 +17,12 @@ function Sidebar({ activeTab, onTabChange, onLogout }) {
           onClick={() => onTabChange('aprendizaje')}
         >
           <span>📖</span> Aprendizaje
+        </li>
+        <li
+          className={`menu-item ${activeTab === 'ejercicios' ? 'active' : ''}`}
+          onClick={() => onTabChange('ejercicios')}
+        >
+          <span>✏️</span> Ejercicios
         </li>
         <li
           className={`menu-item ${activeTab === 'simulacion' ? 'active' : ''}`}
@@ -59,6 +65,30 @@ function Sidebar({ activeTab, onTabChange, onLogout }) {
           border-bottom: 2px solid #6a11cb60;
           margin-bottom: 20px;
           text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          display: flex;
+          align-items: center;
+          gap: 2px;
+        }
+        .sidebar-logo-click { cursor: pointer; user-select: none; }
+        .sidebar-logo-click:hover { opacity: 0.9; }
+        .sidebar-logo-click:hover .logo-plus { transform: rotate(-4deg) scale(1.08); }
+        .logo-plus {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 34px;
+          height: 34px;
+          padding: 0 4px;
+          margin-left: 6px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #c77dff 0%, #9f7cd9 100%);
+          color: #2D1B4E;
+          font-size: 28px;
+          font-weight: 900;
+          line-height: 1;
+          box-shadow: 0 4px 14px rgba(199,125,255,0.55), inset 0 1px 0 rgba(255,255,255,0.6);
+          transform: rotate(-4deg);
+          transition: transform 0.2s;
         }
         .sidebar-menu {
           list-style: none;

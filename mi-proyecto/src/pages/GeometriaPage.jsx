@@ -38,6 +38,16 @@ function GeometriaPage() {
               <p>📐 Contenido en desarrollo. Próximamente encontrarás explicaciones, ejemplos y ejercicios de este tema.</p>
               <div className="nota-box" style={{ background: '#FFF8E1' }}>💡 ¡Estamos trabajando para traerte el mejor material!</div>
             </div>
+            <hr className="divisor" style={{ marginTop: 32 }} />
+            <button
+              className="btn-evaluacion"
+              onClick={() => {
+                const idx = temasGeometria.indexOf(selectedTopic);
+                navigate(`/evaluacion/geometria/${idx >= 0 ? idx : 0}`);
+              }}
+            >
+              Comenzar con examen evaluación →
+            </button>
           </div>
         </main>
         <style>{`
@@ -51,6 +61,8 @@ function GeometriaPage() {
           .cuerpo-texto { font-size: 1.05rem; line-height: 1.85; color: #333; }
           .cuerpo-texto p { margin: 0 0 14px; }
           .nota-box { background: #fff8e1; border-left: 4px solid #f39c12; border-radius: 10px; padding: 14px 20px; margin-bottom: 18px; font-size: 0.95rem; color: #7a5c00; }
+          .btn-evaluacion { background-color: #764ba2; color: white; border: none; border-radius: 40px; padding: 14px 24px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.2s; width: 100%; box-shadow: 0 4px 12px rgba(118,75,162,0.3); margin-top: 8px; }
+          .btn-evaluacion:hover { background-color: #5f3b85; transform: scale(1.01); }
           @media (max-width: 900px) { .main-content { padding: 24px 20px; } .contenido-card { padding: 24px 20px; } }
         `}</style>
       </div>

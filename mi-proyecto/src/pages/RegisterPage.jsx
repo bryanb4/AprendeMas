@@ -40,14 +40,27 @@ function RegisterPage() {
         fechaNacimiento,
         institucion,
         email,
+        password
       };
 
-      await mockRegister(userData, password);
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
 
-      localStorage.setItem('token', 'token-nuevo-usuario');
-      localStorage.setItem('user', JSON.stringify(userData));
+      const data = await response.json();
 
-      navigate('/');
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al registrar usuario');
+      }
+
+      alert(data.message); 
+      
+      navigate('/'); 
+      
     } catch (err) {
       setError(err.message);
     } finally {
@@ -75,7 +88,7 @@ function RegisterPage() {
             Crea tu cuenta
           </h2>
           <p style={{ textAlign: 'left', marginBottom: '2rem', color: '#666' }}>
-            Únete a ExamenDone y prepárate para el éxito.
+            Únete a Aprende<span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, marginLeft: 4, borderRadius: 9, background: 'linear-gradient(135deg, #c77dff 0%, #9f7cd9 100%)', color: '#2D1B4E', fontSize: 20, fontWeight: 900, lineHeight: 1, verticalAlign: 'middle', transform: 'rotate(-4deg)' }}>+</span> y prepárate para el éxito.
           </p>
 
           <form onSubmit={handleSubmit}>

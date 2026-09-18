@@ -9,7 +9,7 @@ exports.getProfile = async (req, res) => {
 
     const result = await pool.query(
       `SELECT nombres, primer_apellido, segundo_apellido,
-       fecha_nacimiento, email, institucion
+       fecha_nacimiento, email, institucion, avatar
        FROM usuarios WHERE id=$1`,
       [userId]
     );
@@ -33,18 +33,28 @@ exports.updateProfile = async (req, res) => {
       nombres,
       primerApellido,
       segundoApellido,
-      fechaNacimiento
+      fechaNacimiento,
+      avatar
     } = req.body;
 
-    await pool.query(
-      `UPDATE usuarios 
-       SET nombres=$1,
-       primer_apellido=$2,
-       segundo_apellido=$3,
-       fecha_nacimiento=$4
-       WHERE id=$5`,
-      [nombres, primerApellido, segundoApellido, fechaNacimiento, userId]
-    );
+    if (avatar !== undefined) {
+      await pool.query(
+        `UPDATE usuarios SET avatar=$1 WHERE id=$2`,
+        [avatar, userId]
+      );
+    }
+
+    if (nombres !== undefined) {
+      await pool.query(
+        `UPDATE usuarios
+         SET nombres=$1,
+         primer_apellido=$2,
+         segundo_apellido=$3,
+         fecha_nacimiento=$4
+         WHERE id=$5`,
+        [nombres, primerApellido, segundoApellido, fechaNacimiento, userId]
+      );
+    }
 
     res.json({ message: "Perfil actualizado correctamente" });
 

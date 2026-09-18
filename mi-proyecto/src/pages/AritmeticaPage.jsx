@@ -617,6 +617,13 @@ function AritmeticaPage() {
             <div className="cuerpo-texto">
               <Componente />
             </div>
+            <hr className="divisor" style={{ marginTop: 32 }} />
+            <button
+              className="btn-evaluacion"
+              onClick={() => navigate(`/evaluacion/aritmetica/${selectedSeccionId - 1}`)}
+            >
+              Comenzar con examen evaluación →
+            </button>
           </div>
         </main>
         <style>{`
@@ -652,6 +659,8 @@ function AritmeticaPage() {
           .tabla-bonita tr:nth-child(even) td { background: #faf9ff; }
           .lista-partes { padding-left: 20px; margin: 0; }
           .lista-partes li { margin-bottom: 8px; }
+          .btn-evaluacion { background-color: #764ba2; color: white; border: none; border-radius: 40px; padding: 14px 24px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.2s; width: 100%; box-shadow: 0 4px 12px rgba(118,75,162,0.3); margin-top: 8px; }
+          .btn-evaluacion:hover { background-color: #5f3b85; transform: scale(1.01); }
           @media (max-width: 900px) { .main-content { padding: 24px 20px; } .contenido-card { padding: 24px 20px; } }
         `}</style>
       </div>

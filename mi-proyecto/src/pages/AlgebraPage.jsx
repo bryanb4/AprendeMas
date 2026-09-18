@@ -2997,6 +2997,16 @@ function AlgebraPage() {
             <div className="cuerpo-texto">
               <Componente />
             </div>
+            <hr className="divisor" style={{ marginTop: 32 }} />
+            <button
+              className="btn-evaluacion"
+              onClick={() => {
+                const idx = secciones.findIndex((s) => s.id === selectedSeccionId);
+                navigate(`/evaluacion/algebra/${idx >= 0 ? idx : 0}`);
+              }}
+            >
+              Comenzar con examen evaluación →
+            </button>
           </div>
         </main>
         <style>{`
@@ -3024,6 +3034,8 @@ function AlgebraPage() {
           .tabla-datos { width: 100%; border-collapse: collapse; margin: 15px 0; background-color: #fff; border-radius: 8px; overflow: hidden; }
           .tabla-datos th, .tabla-datos td { border: 1px solid #ede8f8; padding: 10px; text-align: center; }
           .tabla-datos th { background-color: #764ba2; color: white; }
+          .btn-evaluacion { background-color: #764ba2; color: white; border: none; border-radius: 40px; padding: 14px 24px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.2s; width: 100%; box-shadow: 0 4px 12px rgba(118,75,162,0.3); margin-top: 8px; }
+          .btn-evaluacion:hover { background-color: #5f3b85; transform: scale(1.01); }
           @media (max-width: 900px) { .main-content { padding: 24px 20px; } .contenido-card { padding: 24px 20px; } }
         `}</style>
       </div>

@@ -1,6 +1,23 @@
 // src/components/PerfilView.jsx
 import React, { useState } from 'react';
 
+const AVATARES = [
+  '/avatars/1PerroAvatar.png',
+  '/avatars/2HamsterAvatar.png',
+  '/avatars/3PuercoespinAvatar.png',
+  '/avatars/4GatoAvatarr.png',
+  '/avatars/5Hamster2Avatar.png',
+  '/avatars/6RataAvatar.png',
+  '/avatars/7Perro2Avatar.png',
+  '/avatars/8PericoAvatar.png',
+  '/avatars/9PezAvatar.png',
+  '/avatars/10TortugaAvatar.png',
+  '/avatars/11CamaleonAvatar.png',
+  '/avatars/12ConejoAvatar.png',
+  '/avatars/13PerrosalchichaAvatar.png',
+  '/avatars/14NaranjosoAvatar.png',
+];
+
 const PerfilView = () => {
   const [formData, setFormData] = useState({
     nombres: 'Nombre',
@@ -11,6 +28,9 @@ const PerfilView = () => {
     passwordNueva: '',
     passwordConfirmar: '',
   });
+  const [avatar, setAvatar] = useState(() => localStorage.getItem('avatar') || '');
+  const [avatarTemp, setAvatarTemp] = useState(avatar);
+  const [showSelector, setShowSelector] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,6 +47,26 @@ const PerfilView = () => {
     e.preventDefault();
     console.log('Cambiar contraseña');
     // Validar y enviar
+  };
+
+  const handleGuardarAvatar = async () => {
+    if (!avatarTemp) return;
+    setAvatar(avatarTemp);
+    localStorage.setItem('avatar', avatarTemp);
+    setShowSelector(false);
+    // Intento de persistir en backend (si hay token y endpoint)
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch('/api/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', authorization: token },
+          body: JSON.stringify({ avatar: avatarTemp }),
+        });
+      }
+    } catch {
+      // Sin backend: queda solo en localStorage
+    }
   };
 
   return (
@@ -78,7 +118,16 @@ const PerfilView = () => {
           color: white;
           border: 4px solid white;
           box-shadow: 0 10px 25px rgba(118, 75, 162, 0.3);
+          overflow: hidden;
         }
+        .avatar-img { width: 100%; height: 100%; object-fit: contain; object-position: center; background: #FFFAF0; padding: 8px; }
+        .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px 0 12px; }
+        .avatar-option { border: 3px solid transparent; border-radius: 18px; padding: 6px; cursor: pointer; background: #FFFAF0; transition: 0.15s; }
+        .avatar-option img { width: 100%; aspect-ratio: 1; object-fit: contain; object-position: center; border-radius: 12px; display: block; background: #FFFAF0; }
+        .avatar-option:hover { transform: scale(1.05); }
+        .avatar-option.selected { border-color: #764ba2; box-shadow: 0 0 0 3px rgba(118,75,162,0.25); }
+        .avatar-preview-name { font-size: 0.85rem; color: #764ba2; font-weight: 600; margin-top: 8px; min-height: 20px; }
+        .avatar-actions { display: flex; gap: 10px; justify-content: center; margin-top: 6px; }
         /* Botones de acción (estilo consistente) */
         .btn-outline-purple {
           background: transparent;
@@ -209,11 +258,42 @@ const PerfilView = () => {
         {/* COLUMNA IZQUIERDA: foto y datos estáticos */}
         <div className="card-left">
           <div className="avatar-wrapper">
-            <span>👤</span>
+            {(showSelector ? avatarTemp : avatar)
+              ? <img src={showSelector ? avatarTemp : avatar} alt="Avatar" className="avatar-img" />
+              : <span>👤</span>}
           </div>
-          <button className="btn-outline-purple">
-            <i className="fas fa-camera"></i> Cambiar foto
+          {showSelector && avatarTemp && (
+            <div className="avatar-preview-name">{avatarTemp.split('/').pop().replace(/Avatar\.png$/i, '').replace(/^\d+/, '') || 'Vista previa'}</div>
+          )}
+          <button
+            className="btn-outline-purple"
+            onClick={() => { setAvatarTemp(avatar || AVATARES[0]); setShowSelector((v) => !v); }}
+          >
+            <i className="fas fa-camera"></i> {showSelector ? 'Cerrar' : 'Cambiar foto'}
           </button>
+
+          {showSelector && (
+            <div>
+              <div className="avatar-grid">
+                {AVATARES.map((src) => (
+                  <button
+                    key={src}
+                    type="button"
+                    className={`avatar-option ${avatarTemp === src ? 'selected' : ''}`}
+                    onClick={() => setAvatarTemp(src)}
+                    title={src.split('/').pop()}
+                  >
+                    <img src={src} alt="avatar" />
+                  </button>
+                ))}
+              </div>
+              <div className="avatar-actions">
+                <button className="btn-solid-purple" style={{ padding: '10px 20px', fontSize: 14 }} onClick={handleGuardarAvatar}>
+                  Guardar avatar
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="info-static">
             <div className="label">Correo asociado</div>
