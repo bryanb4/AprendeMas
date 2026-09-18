@@ -1,0 +1,30 @@
+function Seccion25()
+$${String.raw`\frac{5x + 10}{2x - 5}`}$$
+Si $Q(x)$ fuera 0, entonces sería una división entre 0 la cual no es posible, dado a que es un error matemático. Por eso $Q(x)$ tiene que ser diferente de 0.
+Simplificación de Fracciones Algebraicas
+La simplificación consta de "hacer más chica" la expresión (por ejemplo, como cuando ${String.raw`\frac{4}{8} = \frac{2}{4} = \frac{1}{2}`}$ ). Al realizar la simplificación, buscamos expresar la división de manera más sencilla y sin modificar su valor original.
+Ejemplo: Simplificar la expresión
+$${String.raw`\frac{x^2 - 9}{x^2 + 5x + 6}`}$$
+1
+Factorizar el numerador (parte de arriba):
+Es una diferencia de cuadrados. Aplicamos la fórmula ${String.raw`(a+b)(a-b)`}$ :
+${String.raw`x^2 - 9 = (x + 3)(x - 3)`}$
+2
+Factorizar el denominador (parte de abajo):
+Es un trinomio de la forma ${String.raw`x^2 + bx + c`}$ . Buscamos dos números que multiplicados den $6$ y sumados den $5$ :
+${String.raw`x^2 + 5x + 6 = (x + 3)(x + 2)`}$
+3
+Acomodar las factorizaciones en la división:
+$${String.raw`\frac{(x + 3)(x - 3)}{(x + 3)(x + 2)}`}$$
+4
+Eliminar factores comunes:
+Los términos que se repiten en la parte de arriba y de abajo se eliminan, ya que equivalen a dividir algo entre sí mismo ( ${String.raw`\frac{1}{1}`}$ ):
+$${String.raw`\frac{\cancel{(x + 3)}(x - 3)}{\cancel{(x + 3)}(x + 2)}`}$$
+✓
+Respuesta: ${String.raw`\frac{x - 3}{x + 2}`}$
+📌 Nota: Nunca canceles términos que estén sumando o restando directamente (por ejemplo: no puedes cancelar las $x$ en ${String.raw`\frac{x - 3}{x + 2}`}$ ). Solo se pueden cancelar factores que estén multiplicando a todo el bloque.
+✔️ Lo que SÍ se puede cancelar:
+Si la $x$ está multiplicando a todo arriba y a todo abajo, sí la puedes simplificar:
+${String.raw`\frac{\cancel{x}(x - 3)}{\cancel{x}(x + 2)} = \frac{x - 3}{x + 2}`}$
+);
+}

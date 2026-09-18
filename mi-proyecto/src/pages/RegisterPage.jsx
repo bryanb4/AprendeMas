@@ -14,6 +14,7 @@ function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -40,14 +41,13 @@ function RegisterPage() {
         fechaNacimiento,
         institucion,
         email,
+        password,
       };
 
-      await mockRegister(userData, password);
+      const data = await mockRegister(userData, password);
 
-      localStorage.setItem('token', 'token-nuevo-usuario');
-      localStorage.setItem('user', JSON.stringify(userData));
-
-      navigate('/');
+      // Ya no hacemos login automático: debe verificar el correo primero
+      setSuccess(data.message || 'Registro exitoso. Revisa tu correo para confirmar tu cuenta.');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -80,6 +80,14 @@ function RegisterPage() {
 
           <form onSubmit={handleSubmit}>
             {error && <p className="error-message">{error}</p>}
+            {success && (
+              <div style={{ background: '#e8f5e9', border: '1px solid #4caf50', borderRadius: 8, padding: '12px', marginBottom: '1rem', color: '#2e7d32' }}>
+                {success}
+                <div style={{ marginTop: 8 }}>
+                  <Link to="/" style={{ fontWeight: 'bold' }}>Ir a iniciar sesión</Link>
+                </div>
+              </div>
+            )}
 
             {/* ===== NUEVOS CAMPOS con el mismo estilo ===== */}
             <div style={{ marginBottom: '1.2rem' }}>

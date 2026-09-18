@@ -1,0 +1,37 @@
+function Seccion253()
+Multiplicación
+Para la multiplicación es bastante sencillo pues se realiza de manera lineal como vimos previamente en el tema de operaciones con fracciones. La única diferencia es que al final de realizar la multiplicación, es importante tener en cuenta que de ser posible debe de simplificarse / factorizarse.
+Multiplicación de Variables Algebraicas
+Variables diferentes: Cuando multiplicas variables distintas (como $x$ y $y$ ), el resultado es simplemente la unión de ambas.
+Ejemplo: ${String.raw`x \cdot y = xy`}$
+Variables iguales (Misma base): Cuando multiplicas una variable por sí misma (como $x$ por $x$ ), se suman sus exponentes (recuerda que una variable sola siempre tiene un exponente invisible de 1). Esto ocurre incluso si uno de los términos está acompañado por otra variable distinta.
+Ejemplo simple: ${String.raw`x \cdot x = x^2`}$ (ya que ${String.raw`x^1 \cdot x^1 = x^{1+1}`}$ )
+Ejemplo combinado: ${String.raw`x \cdot (xy) = x^2 y`}$
+💡 Nota: Al multiplicar variables, las letras diferentes solo se juntan, mientras que las letras iguales suman sus exponentes.
+Ejemplo 1:
+$${String.raw`\frac{3x}{3y} \times \frac{5xy}{2x}`}$$
+1
+Multiplicar de manera lineal:
+$${String.raw`\frac{3x}{3y} \times \frac{5xy}{2x} = \frac{15x^2 y}{6xy}`}$$
+2
+Factorizar y cancelar términos:
+Por último se factoriza a ser posible, en este caso debemos descomponer cada componente y tachar los posibles.
+$${String.raw`\frac{(3)(5)(x)(x)(y)}{(2)(3)(x)(y)} = \frac{\cancel{(3)}(5)\cancel{(x)}(x)\cancel{(y)}}{(2)\cancel{(3)}\cancel{(x)}\cancel{(y)}} = \frac{5x}{2}`}$$
+✓
+Resultado: ${String.raw`\frac{5x}{2}`}$
+📌 Nota: Dentro del examen o los ejercicios, en algunos casos las respuestas pueden venir sin factorizar, otras factorizadas, entonces depende de eso el tipo de respuesta que se busca o hasta qué punto será necesario desarrollar la operación.
+División
+Para la división se realiza una multiplicación de manera cruzada como se vio previamente en el tema de operaciones con fracciones.
+📌 Nota sobre los signos: Siempre tener en cuenta los signos, tanto en la multiplicación como en la división. Siempre recordar las leyes de los signos, pues podría verse el caso en el que un número deba quedar en negativo o dos negativos se vuelvan positivos.
+Ejemplo:
+$${String.raw`\frac{6x}{2x} \div \frac{7y}{4}`}$$
+1
+Multiplicar de manera cruzada:
+$${String.raw`\frac{6x}{2x} \div \frac{7y}{4} = \frac{24x}{14xy}`}$$
+2
+Descomponer y simplificar factores:
+$${String.raw`\frac{(2)(12)(x)}{(2)(7)(x)(y)} = \frac{\cancel{(2)}(12)\cancel{(x)}}{\cancel{(2)}(7)\cancel{(x)}(y)} = \frac{12}{7y}`}$$
+✓
+Resultado: ${String.raw`\frac{12}{7y}`}$
+);
+}

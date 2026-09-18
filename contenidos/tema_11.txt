@@ -1,0 +1,73 @@
+function Seccion222()
+Un sistema de ecuaciones de 2x2 es un conjunto de dos ecuaciones con dos variables ( $x$ e $y$ ). Resolverlo significa encontrar un valor para $x$ y un valor para $y$ que cumplan ambas condiciones al mismo tiempo.
+Para un sistema de ecuaciones, lo que se busca es saber en qué punto del plano cartesiano las dos rectas se cruzan.
+Método por Sustitución
+Para resolver por este método, es necesario seguir los siguientes pasos:
+Despejar una variable de una de las ecuaciones.
+Sustituir esa expresión en la otra ecuación.
+Resolver la ecuación resultante (que ya tiene una sola variable).
+Sustituir el valor obtenido en el despeje del paso 1 para hallar la otra variable.
+Ejemplo: Resolver el sistema
+$${String.raw`\begin{cases} x + 2y = 7 \\ 3x - 2y = 5 \end{cases}`}$$
+1
+Despejar $x$ en la primera ecuación:
+$$x = 7 - 2y$$
+2
+Sustituir el resultado en la segunda ecuación:
+$$3(7 - 2y) - 2y = 5$$
+3
+Resolver la ecuación resultante:
+$$21 - 6y - 2y = 5 \implies 21 - 8y = 5 \implies -8y = -16 \implies y = 2$$
+4
+Sustituir el valor obtenido ( $y = 2$ ) en el despeje del Paso 1:
+$$x = 7 - 2(2) \implies x = 7 - 4 \implies x = 3$$
+✓
+Resultado: $(3, 2)$
+Es decir, para este sistema de ecuaciones, el punto en el cual se interceptan es el punto (3, 2) .
+Método de Reducción (Suma o Resta)
+La idea es sumar o restar una ecuación a otra para eliminar una variable, ya sea $x$ o $y$ .
+Multiplicar una o ambas ecuaciones por números convenientes para que los coeficientes de una variable sean iguales u opuestos.
+Sumar o restar las ecuaciones para eliminar esa variable.
+Resolver la ecuación resultante.
+Sustituir el valor obtenido en cualquiera de las ecuaciones originales para hallar la otra variable.
+Ejemplo 1 (Directo): Resolver el sistema
+$${String.raw`\begin{cases} x + 2y = 7 \\ 3x - 2y = 5 \end{cases}`}$$
+Para este caso, tenemos $2y$ y $-2y$ . Si sumamos ambas ecuaciones se elimina la variable $y$ directamente:
+$${String.raw`\begin{aligned} x + 2y &= 7 \\ {}+ (3x - 2y &= 5) \\ \hline 4x &= 12 \implies x = 3 \end{aligned}`}$$
+Al tener el valor de $x = 3$ , lo sustituimos en cualquiera de las dos ecuaciones:
+1
+Sustitución en Ecuación 1:
+$$(3) + 2y = 7 \implies 2y = 7 - 3 \implies 2y = 4 \implies y = 2$$
+2
+Sustitución en Ecuación 2:
+$$3(3) - 2y = 5 \implies 9 - 2y = 5 \implies -2y = -4 \implies y = 2$$
+✓
+Respuesta final: $(3, 2)$
+Ejemplo 2 (Con multiplicación): Resolver el sistema
+$${String.raw`\begin{cases} 2x + 3y = 8 \\ 3x + 2y = 7 \end{cases}`}$$
+Para eliminar $y$ , multiplicamos la primera ecuación por $2$ y la segunda por $3$ :
+$${String.raw`\begin{cases} 2(2x + 3y = 8) \implies 4x + 6y = 16 \\ 3(3x + 2y = 7) \implies 9x + 6y = 21 \end{cases}`}$$
+Ahora restamos la segunda ecuación de la primera (o multiplicamos por $-3$ ):
+$${String.raw`\begin{aligned} 4x + 6y &= 16 \\ {}- (9x + 6y &= 21) \\ \hline -5x &= -5 \implies x = 1 \end{aligned}`}$$
+Sustituimos $x = 1$ en la primera ecuación multiplicada:
+$$4(1) + 6y = 16 \implies 6y = 12 \implies y = 2$$
+✓
+Respuesta final: $(1, 2)$
+Criterios de Solución de un Sistema
+Existen tres posibilidades al resolver un sistema de ecuaciones lineales:
+1) Una sola solución
+Es el caso en que las dos rectas se cortan en un único punto $(x, y)$ , como en los ejemplos anteriores.
+2) Sin solución (Rectas paralelas)
+Ocurre cuando las dos rectas son paralelas y nunca se cruzan. No existe ningún punto $(x, y)$ en el que coincidan.
+Ejemplo:
+$${String.raw`\begin{cases} x + y = 3 \\ x + y = 5 \end{cases}`}$$
+Los coeficientes de $x$ e $y$ son idénticos, por lo que tienen la misma pendiente, pero su término independiente cambia. Jamás se interceptarán.
+3) Soluciones infinitas (Misma recta)
+Ocurre cuando ambas ecuaciones representan exactamente la misma recta. Se identifican fácilmente porque sus coeficientes y términos independientes guardan la misma proporción.
+Ejemplo:
+$${String.raw`\begin{cases} x + y = 2 \\ 2x + 2y = 4 \end{cases}`}$$
+Cualquier par $(x, y)$ que satisfaga la primera ecuación también satisfará la segunda. Se cumple la regla de proporcionalidad entre coeficientes:
+$${String.raw`\frac{a_1}{a_2} = \frac{b_1}{b_2} = \frac{c_1}{c_2} \implies \frac{1}{2} = \frac{1}{2} = \frac{2}{4}`}$$
+Gráficamente, ambas ecuaciones se enciman perfectamente en una sola recta continua, compartiendo todos y cada uno de sus puntos:
+);
+}

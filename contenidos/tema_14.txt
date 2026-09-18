@@ -1,0 +1,20 @@
+function Seccion24()
+Ejemplo 1:
+$${String.raw`x^7 - x^6 + x^4`}$$
+Analizamos cada uno de los términos:
+${String.raw`x^7 = (x^4)(x^3)`}$
+${String.raw`x^6 = (x^4)(x^2)`}$
+${String.raw`x^4 = (x^4)(1)`}$
+En este ejemplo, el término que "cabe en cada componente" es $x^4$ , por lo que extraemos ese factor:
+$${String.raw`x^7 - x^6 + x^4 = x^4(x^3 - x^2 + 1)`}$$
+✓
+Resultado factorizado: ${String.raw`x^4(x^3 - x^2 + 1)`}$
+Ejemplo 2 (Numérico / Examen):
+Es importante saber que probablemente en el examen vendrán ejercicios más sencillos como el siguiente:
+$${String.raw`10x^2 - 20x`}$$
+Buscamos el máximo común divisor de los números (10) y la variable de menor exponente ( $x$ ). El factor común es $10x$ :
+✓
+Resultado factorizado: ${String.raw`10x(x - 2)`}$
+📌 Nota de examen: Si multiplicas de nuevo el factor externo por cada término dentro del paréntesis, $10x(x - 2) = 10x^2 - 20x$ , debes recuperar exactamente la expresión original. ¡Es una excelente forma de comprobar tu respuesta!
+);
+}

@@ -1,0 +1,22 @@
+export function Seccion27()
+Eje X (Abscisas): Es la recta horizontal (↔)
+Eje Y (Ordenadas): Es la recta vertical (↕)
+¿Cómo localizar un punto en el plano cartesiano?
+Siempre iniciamos en el origen $(0,0)$ . El primer número que tenemos indica cuántas veces será necesario moverse a la derecha o izquierda, mientras que el segundo indicará el movimiento que tendremos hacia arriba o abajo.
+Cuadrantes en el plano cartesiano
+El plano cartesiano se divide en 4 secciones a las cuales llamamos cuadrantes, se numeran en sentido contrario al reloj.
+Cuadrante I: (+, +) X positiva, Y positiva.
+Cuadrante II: (-, +) X negativa, Y positiva.
+Cuadrante III: (-, -) X negativa, Y negativa.
+Cuadrante IV: (+, -) X positiva, Y negativa.
+Distancia entre dos puntos
+Para medir qué tan lejos está un punto de otro, aplicamos una versión del Teorema de Pitágoras adaptada al plano.
+Fórmula:
+$${String.raw`d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}`}$$
+Ejemplo: Puntos $A(-2,1)$ y $B(1,7)$
+$${String.raw`d = \sqrt{(1 - (-2))^2 + (7 - 1)^2} = \sqrt{3^2 + 6^2} = \sqrt{9 + 36} = \sqrt{45}`}$$
+💡 Consejo para el examen:
+Raíces difíciles: A veces en el examen la respuesta se queda expresada como raíz (ej: ${String.raw`\sqrt{45}`}$ ).
+Truco inverso: Si el resultado dentro de la raíz es 81 y las opciones son números enteros (como 12, 4, 9, 15), eleva cada opción al cuadrado ( ${String.raw`9^2 = 81`}$ ). Así sabrás que la respuesta correcta es 9.
+);
+}

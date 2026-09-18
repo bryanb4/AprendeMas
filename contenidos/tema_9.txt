@@ -1,0 +1,24 @@
+function Seccion213()
+Mayor o igual que: ${String.raw`\ge`}$
+Menor o igual que: ${String.raw`\le`}$
+Ejemplo: $3x - 2 < 8$
+Verifica cuál de los siguientes elementos son una solución: [-3, 2, 4, 5]
+1
+Sustituyendo con -3: ( Sí cumple )
+2
+Sustituyendo con 2: ( Sí cumple )
+3
+Sustituyendo con 4: ( No cumple )
+4
+Sustituyendo con 5: ( No cumple )
+Propiedades de desigualdades
+Si $a > b$ y $b > c$ , entonces $a > c$
+Si $a > b$ , entonces $a + c > b + c$ y $a - c > b - c$
+Si $a > b$ y $c > 0$ , entonces $ac > bc$ y ${String.raw`\frac{a}{c} > \frac{b}{c}`}$
+Si $a > b$ y $c < 0$ , entonces $ac < bc$ y
+[Imagen: Tabla de propiedades de desigualdades e intervalos]
+);
+}
+// ─────────────────────────────────────────────────────────────────────────────
+// SECCIÓN 2.2: ECUACIONES LINEALES EN VARIAS VARIABLES
+// ─────────────────────────────────────────────────────────────────────────────

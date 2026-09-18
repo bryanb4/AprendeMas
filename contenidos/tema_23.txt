@@ -1,0 +1,61 @@
+export function Seccion29()
+Concepto General
+Un sistema de ecuaciones busca encontrar los valores de dos incógnitas que satisfagan ambas ecuaciones simultáneamente, se busca el punto de intersección de ambas ecuaciones. Cada ecuación representa una recta en el plano cartesiano.
+Existen 3 casos que se pueden encontrar.
+Caso 1: Las rectas se intersecan (se cruzan)
+Las rectas se intersecan (se cruzan) en un punto, por lo tanto se dice que el sistema tiene una solución.
+Ejemplo: Para las ecuaciones ${String.raw`x + 2y = 4`}$ y ${String.raw`3x - y = 5`}$
+✓
+Solución: La solución de este sistema es ${String.raw`(2, 1)`}$ pues es donde cruzan las 2 ecuaciones.
+Caso 2: Las rectas son coincidentes
+Se dice que son coincidentes cuando una de las ecuaciones es múltiplo de la otra.
+Ejemplo: ${String.raw`x - 2y = 6`}$ y ${String.raw`3x - 6y = 18`}$
+Si la primera ecuación la multiplicamos por 3, nos daría la segunda ecuación.
+✓
+Solución: Las rectas coinciden en todos sus puntos, por lo tanto el sistema tiene un conjunto infinito de soluciones.
+Caso 3: Las rectas son paralelas
+Cuando son paralelas, las rectas no tienen ningún punto en común por lo que el sistema no podría llegar a tener ninguna solución.
+Ejemplo: ${String.raw`2x - y = 4`}$ y ${String.raw`4x - 2y = -12`}$
+✓
+Solución: El conjunto de soluciones es un conjunto vacío pues jamás coinciden por ende no existen soluciones.
+Métodos de resolución
+Método de suma y resta
+Se realiza una manipulación de ecuaciones a tu conveniencia para eliminar una de las variables al sumarlas.
+Ejemplo:
+$${String.raw`\begin{aligned} 2x + y &= 11 \\ 3x + 4y &= 24 \end{aligned}`}$$
+1
+Paso 1: Igualar coeficientes. Multiplicamos la primera ecuación por ${String.raw`-4`}$ para eliminar ${String.raw`y`}$ .
+$${String.raw`(-4)(2x + y = 11) \implies -8x - 4y = -44`}$$
+2
+Paso 2: Sumar las ecuaciones.
+$${String.raw`\begin{alignedat}{2} -8x - 4y &= -44 \\ 3x + 4y &= 24 \\ \hline -5x \phantom{+ 0y} &= -20 \end{alignedat}`}$$
+3
+Paso 3: Despejar la variable.
+$${String.raw`-5x = -20 \implies x = \frac{-20}{-5} \implies x = 4`}$$
+4
+Paso 4: Sustituir en cualquiera de las ecuaciones originales.
+$${String.raw`2(4) + y = 11 \implies 8 + y = 11 \implies y = 11 - 8 \implies y = 3`}$$
+✓
+Solución: ${String.raw`x = 4`}$ , ${String.raw`y = 3`}$ . El resultado indica el punto en donde las rectas se cruzan (en donde x, y coinciden).
+Método de sustitución
+Se despeja una variable en la ecuación y sustituyes su valor en la otra ecuación.
+Ejemplo:
+$${String.raw`\begin{aligned} x + 3y &= 10 \\ 2x - y &= 6 \end{aligned}`}$$
+1
+Paso 1: Despejar una variable. Despejamos ${String.raw`x`}$ en la primera ecuación, pues es la más sencilla.
+$${String.raw`x + 3y = 10 \implies x = 10 - 3y`}$$
+2
+Paso 2: Sustituir en la otra ecuación.
+$${String.raw`2(10 - 3y) - y = 6`}$$
+3
+Paso 3: Resolver la operación.
+$${String.raw`20 - 6y - y = 6 \implies -7y = 6 - 20 \implies -7y = -14 \implies y = 2`}$$
+4
+Paso 4: Obtener la segunda variable. Sustituyendo el valor obtenido en cualquier expresión (también puede usarse la expresión despejada al inicio).
+$${String.raw`x = 10 - 3(2) \implies x = 4`}$$
+✓
+Resultado: ${String.raw`x = 4`}$ , ${String.raw`y = 2`}$
+💡 Consejo: Siempre elige la ecuación con los números más pequeños o la variable que ya esté casi "sola" para facilitar los cálculos.
+);
+}
+// ─── REGISTRO DE TEMAS ───────────────────────────────────────────────────────

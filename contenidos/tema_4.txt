@@ -1,0 +1,45 @@
+function Seccion14() ' },
+,
+,
+,
+].map((paso, i) => (
+—
+))}
+Leyes de los signos
+Signo 1 × o / Signo 2 = Resultado
++ × + = +
+- × - = +
++ × - = -
+- × + = -
+Regla fácil: signos iguales → + ,
+signos diferentes → - .
+Funciona igual para multiplicación y división, pero no para suma y resta.
+Ejemplo 1 — Sin paréntesis
+$$6^2 \div 9 \times 4 + \sqrt{16} \times 3 - 10 \div 5$$
+1 Expresión original.
+2
+Potencia y raíz: $6^2 = 36$ , $\sqrt{16} = 4$ → queda: $36 \div 9 \times 4 + 4 \times 3 - 10 \div 5$
+3
+Mult/div izq → der: $36 \div 9 = 4$ , $4 \times 4 = 16$ , $4 \times 3 = 12$ , $10 \div 5 = 2$ → queda: $16 + 12 - 2$
+4
+Sumas y restas: $16 + 12 - 2 = 26$
+✓
+Resultado = 26
+Ejemplo 2 — Con paréntesis
+$$(10 - 2) \div 2 \times 3 + (8 + 6)(7 - 2) - 12 \times 2 \div 8$$
+💡 Nota: cuando dos paréntesis se tocan como $(a)(b)$ , indica multiplicación.
+1 Expresión original.
+2
+Interior de paréntesis: $(10-2) = 8$ , $(8+6) = 14$ , $(7-2) = 5$ → queda: $8 \div 2 \times 3 + (14)(5) - 12 \times 2 \div 8$
+3
+Mult/div izq → der: $8 \div 2 = 4$ , $14 \times 5 = 70$ , $12 \times 2 = 24$ → queda: $4 \times 3 + 70 - 24 \div 8$
+4
+Continúa: $4 \times 3 = 12$ , $24 \div 8 = 3$ → queda: $12 + 70 - 3$
+5
+Sumas y restas: $12 + 70 - 3 = 79$
+✓
+Resultado = 79
+📌 Dentro de un mismo nivel jerárquico (p. ej. multiplicación y división),
+siempre se resuelve de izquierda a derecha .
+);
+}

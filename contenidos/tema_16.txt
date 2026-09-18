@@ -1,0 +1,45 @@
+function Seccion242() }>
+Para aplicar esta técnica, debes verificar que la expresión cumpla con las siguientes cuatro condiciones:
+Cuenta con exactamente tres términos .
+El primer término ( $x^2$ ) es cuadrático, positivo y su coeficiente es 1 (por ejemplo: $x^2$ ).
+El segundo término ( $bx$ ) tiene la misma variable con exponente 1, y su coeficiente $b$ puede ser cualquier número (positivo o negativo, por ejemplo: $+6x$ ).
+El tercer término ( $c$ ) es un número independiente (positivo o negativo, por ejemplo: $-16$ ).
+Una vez identificas que se cumplen estas reglas, procedemos a factorizar de la siguiente manera:
+Ejemplo 1 (Paso a paso): Factorizar $x^2 + 6x - 16$
+1
+Extraer raíz del primer componente:
+Se calcula ${String.raw`\sqrt{x^2} = x`}$ y se prepara en dos paréntesis: $(x \quad)(x \quad)$
+2
+Determinar los signos de cada paréntesis:
+Primer paréntesis: toma el signo del segundo término ( ${String.raw`+6x \rightarrow \mathbf{+}`}$ ).
+Segundo paréntesis: resulta de multiplicar el signo del segundo término por el del tercero ( ${String.raw`(+)(-)=\mathbf{-}`}$ ).
+3
+Colocar los signos en las estructuras:
+$(x + \quad)(x - \quad)$
+4
+Buscar los números requeridos:
+Como los signos son diferentes ( $+$ y $-$ ), buscamos dos números que restados den 6 (coeficiente del segundo término) y multiplicados den 16 (tercer término).
+$16 \times 1 = 16$ , pero $16 - 1 = 15$ ❌
+$4 \times 4 = 16$ , pero $4 - 4 = 0$ ❌
+$8 \times 2 = 16$ , y $8 - 2 = 6$ ✔️
+5
+Escribir los factores:
+El número mayor se coloca en el primer paréntesis: $(x + 8)(x - 2)$
+✓
+Resultado factorizado: $(x + 8)(x - 2)$
+Ejemplo 2 (Método directo): Factorizar $x^2 + 4x - 21$
+1
+Base: $(x \quad)(x \quad)$
+2
+Signos: Segundo término es $+4x$ ( $+$ ). Signo combinado: $(+)(-)= -$
+3
+Estructura: $(x + \quad)(x - \quad)$
+4
+Combinaciones para multiplicados 21 y restados 4:
+$21 \times 1 = 21 \implies 21 - 1 = 20$ ❌
+$7 \times 3 = 21 \implies 7 - 3 = 4$ ✔️
+✓
+Resultado factorizado: $(x + 7)(x - 3)$
+📌 Regla rápida de signos: Si los signos de los paréntesis son iguales (ej: ambos positivos o ambos negativos), buscas números que sumados den el centro de la expresión original. Si los signos son distintos (uno positivo y uno negativo), buscas números que restados den el centro de la expresión original.
+);
+}

@@ -1,0 +1,75 @@
+function Seccion23() }>
+Monomio: Solo cuentan con 1 término en la expresión.
+• Ejemplo: $$-3x^2$$
+Binomio: Cuenta con 2 términos no semejantes separados por un signo de $+$ o de $-$ (también puede ser la suma o resta de un número).
+• Ejemplo: $$-2x^2 + 5x$$
+Trinomio: Cuenta con 3 términos no semejantes separados por un signo de $+$ o de $-$ .
+• Ejemplo: $$-2x^2 + 5x + 8$$
+Polinomio: Se les dice así tanto a las expresiones anteriores como a expresiones con más de 3 términos.
+• Ejemplo: $$-x^3 - 2x^2 + 5x + 8 + \dots$$
+Los polinomios pueden tener multivariable, pueden ser también algo como: $$2x + y - 5z$$ . Si bien podría verse más complejo al realizar operaciones con ellos, esto es exactamente igual que en la sección de expresiones algebraicas, ya que cuando realices una operación siempre debe ser con términos semejantes .
+Suma de Polinomios
+Puedes sumarlo como sea de tu mejor agrado, una buena forma de hacerlo al tener 3 expresiones es acomodar la suma como cuando te enseñaron a sumar, acomodando los términos semejantes uno abajo del otro.
+Ejemplo 1: Sumar las siguientes tres expresiones
+$$(3x - 7y - 3z + 5) + (-10x + 4z) + (-x + 2y + z - 8)$$
+Acomodando verticalmente por términos semejantes:
+$${String.raw`\begin{aligned}
+3x - 7y - 3z + 5 \\
+-10x \phantom{ - 7y} + 4z \phantom{ + 5} \\
+{}+ (-x + 2y + z - 8) \\
+\hline
+-8x - 5y + 2z - 3
+\end{aligned}`}$$
+✓
+Respuesta: $-8x - 5y + 2z - 3$
+También las variables pueden estar con potencias de otras variables y quedarían igual.
+Ejemplo 2 (Con fracciones y potencias):
+$${String.raw`\left( \frac{2}{3}x^2y + \frac{1}{2}xy^2 - 4 \right) + \left( \frac{1}{3}x^2y - \frac{5}{2}xy^2 + 9 \right)`}$$
+Acomodo vertical:
+$${String.raw`\begin{aligned}
+\frac{2}{3}x^2y + \frac{1}{2}xy^2 - 4 \\
+{}+ \left( \frac{1}{3}x^2y - \frac{5}{2}xy^2 + 9 \right) \\
+\hline
+x^2y - 2xy^2 + 5
+\end{aligned}`}$$
+✓
+Respuesta: $x^2y - 2xy^2 + 5$
+(Si tienes duda respecto a los resultados, consultar el tema de operaciones con fracción, previamente visto).
+Resta de Polinomios
+Para restar polinomios, lo más importante es no olvidar la ley de los signos, especialmente que menos por menos es más $(- \times - = +)$ . El signo "menos" de la resta va a cambiarle el signo a todo el polinomio que esté restando.
+Ejemplo 1 (En horizontal):
+$$(5a - 3b - 8c) - (2a - 4b - 9c)$$
+Aquí, el signo de resta afecta a todo el segundo paréntesis:
+El $2a$ positivo pasa a ser $-2a$ .
+El $-4b$ pasa a ser $+4b$ .
+El $-9c$ pasa a ser $+9c$ .
+La expresión reescrita nos queda así:
+$$5a - 2a - 3b + 4b - 8c + 9c$$
+Agrupamos los términos semejantes y resolvemos:
+✓
+Resultado: $3a + b + c$
+Ejemplo 2 (Acomodo vertical convencional):
+Para no confundirte con los signos al restar hacia abajo, un truco buenísimo es multiplicar mentalmente el signo "menos" por todo el segundo polinomio antes de escribirlo. Así, solo tienes que hacer una suma directa de columnas, lo cual es mucho más fácil y rápido.
+Resta de:
+$$(10x^2 - 9x - 8) - (4x^2 - 4x + 4)$$
+Le cambiamos los signos al segundo polinomio al realizar la multuiplicacion del signo ( $-$ ) por toda la expresion ( $-4x^2 + 4x - 4$ ) y lo acomodamos debajo:
+$${String.raw`\begin{aligned}
+10x^2 - 9x - 8 \\
+{}+ (-4x^2 + 4x - 4) \\
+\hline
+6x^2 - 5x - 12
+\end{aligned}`}$$
+✓
+Resultado: $6x^2 - 5x - 12$
+Como puedes ver, restar es exactamente igual que sumar; solo tienes que recordar hacer el cambio de signos al polinomio que resta antes de empezar a operar.
+);
+}
+// Subcomponente reutilizable para renderizar la "casita" de división escolar limpia
+const CasitaDivision = ( ) => }>
+}>
+style= }
+>
+))}
+)}
+);
+};

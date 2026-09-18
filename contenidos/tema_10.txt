@@ -1,0 +1,20 @@
+function Seccion22()
+Una ecuación lineal con dos variables tiene infinitas soluciones , pero no cualquier par de números sirve: los valores de $x$ e $y$ deben cumplir la ecuación.
+Ejemplo en la vida cotidiana:
+Imagina que compraste un kilo de arroz y un kilo de frijol y gastaste $80 en total entre los dos. No sabes cuánto costó cada uno, pero sabes que:
+$$x + y = 80$$
+Entonces las posibles soluciones podrían ser:
+$x = 40, \quad y = 40$
+$x = 50, \quad y = 30$
+$x = 55, \quad y = 25 \dots$
+En casos como este, difícilmente tendrás respuestas como $x = -10, y = 90$ . Pero dentro de las soluciones posibles en el plano cartesiano, podría llegar a suceder que las respuestas sean negativas.
+Restricción de los coeficientes
+Es importante tener en cuenta que, en una ecuación lineal de dos variables escrita como $Ax + By = C$ o $Ax + By + C = 0$ , $A$ y $B$ no pueden ser cero al mismo tiempo .
+Si ambos fueran cero, la ecuación no dependería de $x$ ni de $y$ , por lo que no sería una ecuación lineal con dos variables. Si tanto $A$ como $B$ fueran cero, entonces:
+En la forma $Ax + By = C$ tendríamos $0 = C$ . Para que sea consistente, $C$ debe ser 0; si $C \neq 0$ , es una contradicción.
+En la forma $Ax + By + C = 0$ tendríamos $C = 0$ . Si $C \neq 0$ , también es contradictorio.
+Ejemplo: Para la ecuación $x + y = 5$
+Pares de soluciones: $(2,3)$ , $(0,5)$ , $(1,4)$ , $(10,-5)$ .
+Esos pares de números $(x,y)$ son respuestas para la expresión anterior, pues cumplen con la igualdad, más no son las únicas respuestas posibles.
+);
+}

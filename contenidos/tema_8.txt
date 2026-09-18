@@ -1,0 +1,24 @@
+function Seccion212() }> Ejemplo de resta: $x - 4 = 12$
+1
+Aplicar dicha cantidad a cada lado: $x - 4 (+4) = 12 (+4)$
+✓
+Resultado: $x = 16$ .
+2. Multiplicación y división
+Ejemplo con multiplicación: $2x = 18$
+1
+Aplicando la división entre 2 a cada lado: ${String.raw`\frac{2x}{2} = \frac{18}{2}`}$
+✓
+Resultado: $x = 9$ .
+Ejemplo con división: ${String.raw`\frac{x}{4} = 6`}$
+1
+Multiplicar por 4 a cada lado: ${String.raw`\left(\frac{x}{4}\right)(4) = (6)(4)`}$
+✓
+Resultado: $x = 24$ .
+3. Potencia y raíz
+Ejemplo con potencia: $x^4 = 81$
+1
+Aplicar raíz equivalente: ${String.raw`\sqrt[4]{x^4} = \sqrt[4]{81}`}$
+✓
+Resultado: $x = 3$ .
+);
+}

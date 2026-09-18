@@ -1,0 +1,38 @@
+function Seccion13() }>
+[Imagen: Partes de una raíz: índice, signo radical, radicando y raíz]
+La raíz responde a la pregunta:
+¿Qué número multiplicado por sí mismo da el radicando?
+Ejemplo: $\sqrt{25}$ → ¿Qué número × sí mismo = 25?
+→ 5 , pues $5 \times 5 = 25$ .
+Signos dentro del radical
+Raíces de índice par (2, 4, 6…)
+En el radicando jamás puede existir un signo negativo
+dentro de los números reales. Por ejemplo, $\sqrt[4]{-256}$ no tiene
+solución real porque elevar cualquier número real a una potencia par siempre da positivo:
+$$4 \times 4 \times 4 \times 4 = 256 \quad \text{y} \quad (-4)^4 = 256$$
+Por lo tanto no se puede llegar a -256 con índice par.
+Raíces de índice impar (3, 5, 7…)
+Sí puede existir un radicando negativo. Ejemplo:
+$$\sqrt[3]{-27} = -3 \quad \text{porque} \quad (-3) \times (-3) \times (-3) = -27$$
+Como también: $\sqrt[3]{27} = 3$ , pues $3 \times 3 \times 3 = 27$ .
+Tabla resumen
+¿Solución real?
+Expresión
+Multiplicación
+Solución
+Índice
+✅ Sí $\sqrt[4]{256}$ 4 × 4 × 4 × 4 4 Par
+❌ No $\sqrt[4]{-256}$ No existe No existe en reales Par
+✅ Sí $\sqrt[3]{-27}$ (-3) × (-3) × (-3) -3 Impar
+✅ Sí $\sqrt[3]{27}$ 3 × 3 × 3 3 Impar
+¿Cómo resolver una raíz cuadrada?
+Si la pregunta es de opción múltiple
+Toma una opción, elévala al cuadrado y verifica si coincide con el radicando.
+¿Cuál es la solución de $\sqrt{36}$ ?
+a) 3 b) 8 c) 6 d) 8
+Pruebas: $6^2 = 36$ ✅ → Respuesta: c) 6
+Si la pregunta no tiene opciones
+Usa aproximaciones: piensa un número y elévalo. Si el resultado es menor,
+aumenta el número; si es mayor, disminúyelo, hasta encontrar la respuesta exacta.
+);
+}

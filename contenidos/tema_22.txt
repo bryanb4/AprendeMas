@@ -1,0 +1,50 @@
+export function Seccion28()
+Funciones lineales en el plano cartesiano
+Una función es como una ecuación en donde sustituyes el valor de ${String.raw`x`}$ para obtener el valor de ${String.raw`y`}$ .
+Existe una pregunta esencial para entender el comportamiento de una función lineal la cual es: cuando ${String.raw`X`}$ vale 1, ¿cuánto vale ${String.raw`Y`}$ ?
+De esta manera realizas una tabulación , asignando valores a ${String.raw`x`}$ para ir conociendo el comportamiento de ${String.raw`y`}$ .
+Ejemplo: Para la función ${String.raw`f(x) = 2x + 5`}$
+Valor de X
+Sustitución en ${String.raw`f(x) = 2x + 5`}$
+Coordenada ${String.raw`(X, Y)`}$
+X = -1
+${String.raw`2(-1) + 5 = 3`}$
+(-1, 3)
+X = 0
+${String.raw`2(0) + 5 = 5`}$
+(0, 5)
+X = 1
+${String.raw`2(1) + 5 = 7`}$
+(1, 7)
+Al tener estos puntos, comenzamos a localizarlos en el plano para trazar la recta:
+Tipos de Funciones
+1. Función Constante
+Para las funciones constantes el valor de ${String.raw`y`}$ siempre será el mismo sin importar cuánto valga ${String.raw`x`}$ , o viceversa. Gráficamente se ve como una línea totalmente recta (horizontal o vertical).
+2. Función Lineal
+La función ${String.raw`y = 2x + 5`}$ es una función lineal. Se le llama así porque al graficar se forma una línea recta inclinada donde ni ${String.raw`x`}$ ni ${String.raw`y`}$ son constantes.
+Tienen una pendiente y se representan con la fórmula general:
+$${String.raw`y = mx + b`}$$
+m: Representa la pendiente (inclinación) de la recta.
+b: Representa la ordenada al origen (el punto exacto donde la recta corta al eje Y).
+📌 Ejemplo en ${String.raw`y = 2x + 5`}$ :
+${String.raw`m = 2`}$ (Pendiente positiva)
+${String.raw`b = 5`}$ (Corta al eje Y en el punto 5)
+Pendiente de una Recta
+La pendiente ( ${String.raw`m`}$ ) nos indica qué tan inclinada está una recta. Se analiza siempre de izquierda a derecha :
+• ${String.raw`m > 0`}$ : Pendiente positiva (La recta sube hacia la derecha).
+• : Pendiente negativa (La recta baja hacia la derecha).
+• ${String.raw`m = 0`}$ : Pendiente cero (No hay inclinación, es una línea horizontal).
+¿Cómo calcular la pendiente con dos puntos?
+Para calcular el valor de la pendiente entre dos puntos se utiliza la fórmula:
+$${String.raw`m = \frac{y_2 - y_1}{x_2 - x_1}`}$$
+Ejemplo: Dados los puntos ${String.raw`A(-2, 1)`}$ y ${String.raw`B(1, 7)`}$
+1
+Identificamos coordenadas:
+${String.raw`x_1 = -2, \quad y_1 = 1 \quad | \quad x_2 = 1, \quad y_2 = 7`}$
+2
+Sustituimos en la fórmula:
+$${String.raw`m = \frac{7 - 1}{1 - (-2)} = \frac{6}{1 + 2} = \frac{6}{3} = 2`}$$
+✓
+Resultado: La pendiente tiene un valor de ${String.raw`m = 2`}$ .
+);
+}

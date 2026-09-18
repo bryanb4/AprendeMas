@@ -1,0 +1,14 @@
+function Seccion11() }>
+Naturales
+Números positivos incluyendo el 0: 1, 2, 3, 4, 5, 6, 7, 8, 9, 0.
+También pueden representarse como: $\frac{20}{2}$ , $\sqrt{9}$ .
+Enteros Negativos
+Usados para representar la falta de algo o como una deuda:
+-1, -20, etc.
+Fraccionarios
+Conocidos también como decimales. Se representan por punto decimal o como
+una fracción cuyo resultado no es entero o exacto:
+$\frac{1}{2}$ , $\frac{9}{10}$ , $\frac{3}{9}$ …
+[Imagen: Clasificación de números reales]
+);
+}

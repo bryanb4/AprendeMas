@@ -1,0 +1,69 @@
+function Seccion15() }>
+[Imagen: Partes de una fracción]
+Operaciones con Fracciones
+1) Suma
+Depende si el denominador es el mismo o es diferente.
+a) Con mismo denominador
+El denominador pasa igual y los numeradores son los que se suman.
+Fórmula:
+$$\frac{a}{c} + \frac{b}{c} = \frac{a + b}{c}$$
+Ejemplo:
+$$\frac{3}{5} + \frac{1}{5} = \frac{3 + 1}{5} = \frac{4}{5}$$
+b) Con diferente denominador
+Primero se multiplican los denominadores, después los numeradores se multiplican por el denominador contrario y se suman los resultados que obtengas en la parte del numerador.
+Fórmula:
+$$\frac{a}{b} + \frac{c}{d} = \frac{a \cdot d + b \cdot c}{b \cdot d}$$
+Ejemplo:
+$$\frac{1}{2} + \frac{1}{3} = \frac{1 \cdot 3 + 2 \cdot 1}{2 \cdot 3} = \frac{3 + 2}{6} = \frac{5}{6}$$
+2) Resta
+Es exactamente igual que la suma pero con la operación contraria.
+a) Con mismo denominador
+El denominador pasa igual y los numeradores son los que se restan.
+Fórmula:
+$$\frac{a}{c} - \frac{b}{c} = \frac{a - b}{c}$$
+Ejemplo:
+$$\frac{4}{5} - \frac{1}{5} = \frac{4 - 1}{5} = \frac{3}{5}$$
+b) Con diferente denominador
+Primero se multiplican los denominadores, después los numeradores se multiplican por el denominador contrario y se restan los resultados que obtengas en la parte del numerador.
+Fórmula:
+$$\frac{a}{b} - \frac{c}{d} = \frac{a \cdot d - b \cdot c}{b \cdot d}$$
+Ejemplo:
+$$\frac{3}{4} - \frac{1}{3} = \frac{3 \cdot 3 - 4 \cdot 1}{4 \cdot 3} = \frac{9 - 4}{12} = \frac{5}{12}$$
+3) Multiplicación
+Para realizar esta operación se realiza de manera directa, se multiplica numerador con numerador y denominador con denominador.
+Fórmula:
+$$\frac{a}{b} \cdot \frac{c}{d} = \frac{a \cdot c}{b \cdot d}$$
+Ejemplo:
+$$\frac{2}{3} \cdot \frac{4}{5} = \frac{2 \cdot 4}{3 \cdot 5} = \frac{8}{15}$$
+4) División
+Esta operación se realiza de manera “Cruzada” multiplicando el numerador por el denominador contrario, y el numerador con el denominador contrario.
+[Imagen: División de fracciones de manera cruzada]
+Fórmula:
+$$\frac{a}{b} \div \frac{c}{d} = \frac{a \cdot d}{b \cdot c}$$
+Ejemplo:
+$$\frac{1}{2} \div \frac{2}{3} = \frac{1 \cdot 3}{2 \cdot 2} = \frac{3}{4}$$
+5) Potencia
+Si la potencia afecta a toda la fracción (tanto el numerador como el denominador) los dos se elevan. También podría solo afectar una parte de la fracción, y para resolverlo, simplemente elevas la sección a la que esté afectando.
+Fórmula:
+$$\left(\frac{a}{b}\right)^n = \frac{a^n}{b^n}$$
+Ejemplo:
+$$\left(\frac{2}{3}\right)^2 = \frac{2^2}{3^2} = \frac{4}{9}$$
+6) Raíz
+Ocurre lo mismo que con la potencia, si es afectada toda la fracción, se le aplica la misma operación tanto al denominador como al numerador, si no solo se realiza al número que esté afectando.
+Fórmula:
+$$\sqrt[n]{\frac{a}{b}} = \frac{\sqrt[n]{a}}{\sqrt[n]{b}}$$
+Ejemplo:
+$$\sqrt{\frac{9}{16}} = \frac{\sqrt{9}}{\sqrt{16}} = \frac{3}{4}$$
+Reducción a la Fracción Irreducible
+Siempre se debe buscar reducir la fracción hasta su fracción irreducible, siguiendo el siguiente ejemplo:
+1
+Se divide entre 2 hasta llegar a una fracción la cual ya no pueda dividirse entre 2 sin alterar el resultado:
+$$\frac{24}{36} = \frac{12}{18} = \frac{6}{9}$$
+2
+Se divide entre 3 hasta llegar a una fracción la cual ya no puede dividirse entre 3 sin alterar el resultado:
+$$\frac{6}{9} = \frac{2}{3}$$
+✓
+Fracción irreducible: $\frac{2}{3}$
+);
+}
+// ─── Secciones registradas ────────────────────────────────────────────────────

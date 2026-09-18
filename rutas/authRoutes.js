@@ -13,6 +13,9 @@ const authMiddleware = require('../middleware/authMiddleware');
 // -------- AUTH --------
 router.post('/login', authController.login);
 router.post('/register', authController.register);
+router.get('/verify/:token', authController.verifyEmail);
+router.get('/verify', authController.verifyEmail);
+router.post('/resend-verification', authController.resendVerification);
 
 
 // -------- PERFIL --------
@@ -22,7 +25,7 @@ router.put('/profile/password', authMiddleware, profileController.changePassword
 
 
 // -------- RESULTADOS --------
-router.get('/resultados', resultController.getResults);
+router.get('/resultados', authMiddleware, resultController.getResults);
 
 
 module.exports = router;

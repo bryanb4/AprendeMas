@@ -1,0 +1,38 @@
+function Seccion252()
+Cuando los denominadores son iguales
+Cuando son iguales, el denominador no cambia, simplemente se realiza la suma o resta al numerador (la parte de arriba).
+Ejemplo:
+$${String.raw`\frac{3x - 2}{x^2 - 1} + \frac{-x + 4}{x^2 - 1}`}$$
+1
+Realizar la suma de los numeradores:
+$${String.raw`\frac{(3x - 2) + (-x + 4)}{x^2 - 1} = \frac{2x + 2}{x^2 - 1}`}$$
+2
+Factorizar y simplificar:
+Por diferencia de cuadrados factorizamos el denominador, después descartamos los valores iguales que se encuentran tanto en el numerador como en el denominador.
+$${String.raw`\frac{2(x + 1)}{(x + 1)(x - 1)} = \frac{2}{x - 1}`}$$
+✓
+Resultado: ${String.raw`\frac{2}{x - 1}`}$
+Cuando los denominadores son diferentes
+Al ser sumas de fracciones las cuales cuentan con denominador diferente, se necesita encontrar el mínimo común múltiplo (M.C.M) , es decir buscar que los denominadores sean iguales. Esto se puede lograr multiplicando la fracción por algún número para igualar el denominador, o multiplicar las dos fracciones por algún número o por alguna letra ( $x$ o $y$ comúnmente) para que las dos compartan denominador.
+Ejemplo 1:
+$${String.raw`\frac{3x}{2} + \frac{x}{4}`}$$
+1
+Igualar denominadores y sumar:
+Al observar esta operación, podemos notar que si multiplicamos por 2 la primera fracción, podríamos tener el mismo denominador de la segunda fracción, así que realizamos esa multiplicación y posteriormente la suma de fracción.
+$${String.raw`2\left(\frac{3x}{2}\right) + \frac{x}{4} = \frac{6x + x}{4} \rightarrow \frac{7x}{4}`}$$
+✓
+Resultado: ${String.raw`\frac{7x}{4}`}$
+Ejemplo 2:
+$${String.raw`\frac{x + 2}{y} + \frac{6x - 10}{xy}`}$$
+1
+Multiplicar para igualar denominadores:
+La primera fracción requiere ser multiplicada por $x$ , para obtener el mismo denominador de la segunda fracción.
+$${String.raw`x\left(\frac{x + 2}{y}\right) + \frac{6x - 10}{xy} = \frac{x^2 + 2x}{xy} + \frac{6x - 10}{xy}`}$$
+2
+Sumar términos semejantes:
+$${String.raw`\frac{(x^2 + 2x) + (6x - 10)}{xy} \rightarrow \frac{x^2 + 8x - 10}{xy}`}$$
+✓
+Resultado: ${String.raw`\frac{x^2 + 8x - 10}{xy}`}$
+📌 Nota: A ser posible se debe siempre simplificar / factorizar, pero el polinomio que se encuentra en el numerador ( ${String.raw`x^2 + 8x - 10`}$ ) no es posible que se factorice, por eso esa sería la respuesta final.
+);
+}

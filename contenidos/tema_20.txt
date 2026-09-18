@@ -1,0 +1,108 @@
+export function Seccion26() }>
+Las ecuaciones cuadráticas tienen diferentes clasificaciones:
+Completas: Tienen la forma ${String.raw`ax^2 + bx + c = 0`}$
+Incompletas: Estas se dividen en dos tipos:
+a) Mixtas: ${String.raw`ax^2 + bx = 0`}$
+b) Puras: ${String.raw`ax^2 + c = 0`}$
+📌 Nota: Para el examen Piense II (examen de ingreso a la preparatoria UDG) solo suelen venir preguntas en donde la ecuación cuadrática es completa. Pero en caso de que aparezca otro tipo, basta con realizar el consejo que aparece al final de la lección.
+Resolver una ecuación de segundo grado (cuadrática) significa encontrar los "Ceros" , es decir, descubrir qué valores de $x$ hacen que la ecuación sea igual a 0.
+Formalmente a las respuestas de una ecuación cuadrática se les conoce como soluciones, raíces o ceros.
+Tipos de soluciones que puedes encontrar:
+Dos soluciones: La curva pasa por el cero dos veces.
+Única solución: La curva toca el cero en un solo punto.
+Sin solución: La curva no toca el cero nunca.
+La más común en el examen será en donde la curva pasa por el cero dos veces o encontrar dos números.
+Si en el examen te ponen un plano cartesiano, ¡encontrar la respuesta es facilísimo!
+Gráficamente, una función cuadrática siempre forma una curva en forma de "U" llamada Parábola .
+La respuesta visual son los puntos exactos donde la curva cruza o toca el eje horizontal ( $X$ ), que es donde la altura ( $Y$ ) vale cero.
+En este caso puedes observar que las respuestas o los ceros serían el 1 y el 2 . Pues son el punto en el que la parábola en U cruza por 0 en el eje Y (la altura).
+Para aplicar cualquier método de solución, la ecuación DEBE estar igualada a 0 . Si te la dan desordenada, tienes que pasar todos los términos a un solo lado cambiando sus signos.
+Ejemplo de desorden:
+$${String.raw`x^2 + 5x = 1 - x`}$$
+1
+Pasando todo a la izquierda:
+$${String.raw`x^2 + 5x - 1 + x = 0`}$$
+2
+Simplificando términos semejantes:
+$${String.raw`x^2 + 6x - 1 = 0`}$$
+Métodos de Resolución
+MÉTODO 1: Por Factorización (El más rápido para el examen)
+Es ideal cuando la $x^2$ está sola ( $a = 1$ ).
+Ejemplo: Resolver la ecuación
+$${String.raw`x^2 + 5x + 6 = 0`}$$
+1
+Abrir dos paréntesis con una $x$ :
+$${String.raw`(x \quad)(x \quad) = 0`}$$
+2
+Definir los signos:
+El signo del primer paréntesis es el del término del medio: $+$
+El signo del segundo es la multiplicación de los dos signos de la ecuación ( $+ \cdot + = +$ ): $+$
+$${String.raw`(x + \quad)(x + \quad) = 0`}$$
+3
+Buscar los números mágicos:
+Buscamos dos números que multiplicados den $6$ y sumados den $5$ . Los números son 3 y 2 .
+$${String.raw`(x + 3)(x + 2) = 0`}$$
+4
+Despejar (Cambiar el signo):
+Para hallar las respuestas finales, igualamos cada paréntesis a cero (lo que equivale a simplemente cambiarles el signo):
+$${String.raw`x + 3 = 0 \rightarrow x_1 = -3`}$$
+$${String.raw`x + 2 = 0 \rightarrow x_2 = -2`}$$
+✓
+Respuestas: $x_1 = -3$ y $x_2 = -2$
+📌 Para comprobar: Sustituye el $-3$ o el $-2$ en la ecuación original. Si la operación final te da $0$ , ¡tu respuesta es correcta!
+MÉTODO 2: Por Fórmula General (Para cualquier ecuación)
+Se usa cuando la ecuación es más difícil o la $x^2$ tiene un número al lado ( $a \neq 1$ ). La fórmula es:
+$${String.raw`x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}`}$$
+Ejemplo: Resolver ${String.raw`3x^2 + 2x - 8 = 0`}$
+1
+Identificar los valores de $a$ , $b$ y $c$ :
+$a = 3$ (término cuadrático)
+$b = 2$ (término lineal)
+$c = -8$ (número solo)
+2
+Sustituir en la fórmula y resolver ordenadamente:
+$${String.raw`x = \frac{-(2) \pm \sqrt{(2)^2 - 4(3)(-8)}}{2(3)}`}$$
+$${String.raw`x = \frac{-2 \pm \sqrt{4 + 96}}{6}`}$$
+$${String.raw`x = \frac{-2 \pm \sqrt{100}}{6}`}$$
+$${String.raw`x = \frac{-2 \pm 10}{6}`}$$
+3
+Separar en las dos respuestas ( $\pm$ ):
+Para $x_1$ (usando el $+$ ):
+$${String.raw`x_1 = \frac{-2 + 10}{6} = \frac{8}{6} = \frac{4}{3}`}$$
+Para $x_2$ (usando el $-$ ):
+$${String.raw`x_2 = \frac{-2 - 10}{6} = \frac{-12}{6} = -2`}$$
+✓
+Respuestas: ${String.raw`x_1 = \frac{4}{3}`}$ y $x_2 = -2$
+💡 Tip para el examen: Es importante conocer el método por si lo necesitas, pero un gran tip es que, en el examen Piense II, vendrán opciones múltiples, por lo que es mucho más rápido sustituir en la fórmula por medio de la respuesta sin realizar el procedimiento completo.
+Ejemplo con sustitución:
+¿Cuál de las siguientes opciones contiene las soluciones de la ecuación cuadrática ${String.raw`x^2 - 2x - 15 = 0`}$ ?
+A) $x_1 = -5, x_2 = 3$
+B) $x_1 = 5, x_2 = -3$
+C) $x_1 = 2, x_2 = -5$
+D) $x_1 = -2, x_2 = 15$
+1
+Probamos con la Opción A:
+La opción A dice que la primera respuesta es $x = -5$ . Vamos a cambiar las $x$ por un $-5$ :
+$${String.raw`(-5)^2 - 2(-5) - 15 = 0`}$$
+Hacemos las operaciones mentalmente (cuidado con los signos):
+$(-5)^2$ se vuelve 25 positivo .
+$-2 \times -5$ se vuelve +10 positivo .
+La cuenta queda: $25 + 10 - 15 \rightarrow 35 - 15 = 20$
+Como el resultado fue 20 y no dio 0 , la Opción A queda descartada.
+2
+Probamos con la Opción B:
+La opción B dice que la primera respuesta es $x = 5$ . Cambiamos las $x$ por un $5$ :
+$${String.raw`(5)^2 - 2(5) - 15`}$$
+$(5)^2 = 25$
+$-2 \times 5 = -10$
+La cuenta queda: $25 - 10 - 15 \rightarrow 15 - 15 = 0$ ✔️
+Como $x = 5$ sí da 0, comprobamos el segundo número ( $x = -3$ ):
+$${String.raw`(-3)^2 - 2(-3) - 15`}$$
+$(-3)^2 = 9$
+$-2 \times -3 = +6$
+La cuenta queda: $9 + 6 - 15 \rightarrow 15 - 15 = 0$ ✔️
+Como ambos números cumplen con la igualdad a cero, confirmamos la solución.
+✓
+Respuesta Correcta: B) $x_1 = 5, x_2 = -3$
+);
+}

@@ -1,7 +1,21 @@
 // src/components/Sidebar.jsx
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+function getStoredRol() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    return user?.rol || 'alumno';
+  } catch {
+    return 'alumno';
+  }
+}
 
 function Sidebar({ activeTab, onTabChange, onLogout }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isAdmin = getStoredRol() === 'admin';
+  const path = location.pathname;
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">🎓 ExamenDone</div>
@@ -30,6 +44,22 @@ function Sidebar({ activeTab, onTabChange, onLogout }) {
         >
           <span>🏆</span> Resultados
         </li>
+        {isAdmin && (
+          <>
+            <li
+              className={`menu-item ${path === '/adminIA' ? 'active' : ''}`}
+              onClick={() => navigate('/adminIA')}
+            >
+              <span>🤖</span> Generador IA
+            </li>
+            <li
+              className={`menu-item ${path === '/adminTabla' ? 'active' : ''}`}
+              onClick={() => navigate('/adminTabla')}
+            >
+              <span>🗂</span> Banco preguntas
+            </li>
+          </>
+        )}
         <li className="menu-item" onClick={onLogout} style={{ marginTop: '650px' }}>
           <span>🚪</span> Cerrar sesión
         </li>

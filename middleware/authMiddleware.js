@@ -2,11 +2,16 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
 
-  const token = req.headers.authorization;
+  const header = req.headers.authorization;
 
-  if (!token) {
+  if (!header) {
     return res.status(401).json({ message: "Token requerido" });
   }
+
+  // Acepta "Bearer <token>" y también token crudo por compatibilidad
+  const token = header.startsWith("Bearer ")
+    ? header.slice(7)
+    : header;
 
   try {
 

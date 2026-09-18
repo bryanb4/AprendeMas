@@ -8,7 +8,7 @@ exports.getProfile = async (req, res) => {
     const userId = req.user.id;
 
     const result = await pool.query(
-      `SELECT nombres, primer_apellido, segundo_apellido,
+      `SELECT nombre, primer_apellido, segundo_apellido,
        fecha_nacimiento, email, institucion
        FROM usuarios WHERE id=$1`,
       [userId]
@@ -30,20 +30,23 @@ exports.updateProfile = async (req, res) => {
     const userId = req.user.id;
 
     const {
+      nombre,
       nombres,
       primerApellido,
       segundoApellido,
       fechaNacimiento
     } = req.body;
 
+    const nombreFinal = nombre || nombres;
+
     await pool.query(
       `UPDATE usuarios 
-       SET nombres=$1,
+       SET nombre=$1,
        primer_apellido=$2,
        segundo_apellido=$3,
        fecha_nacimiento=$4
        WHERE id=$5`,
-      [nombres, primerApellido, segundoApellido, fechaNacimiento, userId]
+      [nombreFinal, primerApellido, segundoApellido, fechaNacimiento, userId]
     );
 
     res.json({ message: "Perfil actualizado correctamente" });

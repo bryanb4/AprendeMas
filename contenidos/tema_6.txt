@@ -1,0 +1,27 @@
+function Seccion21() }>
+[Imagen: Partes de una expresión algebraica]
+Simplificación
+Para simplificar/realizar dichas expresiones, primero se ocupan resolver todas las operaciones
+posibles en donde se “junten” los valores semejantes.
+Suma
+Se suman los coeficientes (números) que acompañen a la variable con el mismo exponente.
+Ejemplo: $3x + 5x = 8x$
+Resta
+Se restan los coeficientes (números) que acompañen a la variable con el mismo exponente.
+Ejemplo: $7x - 2x = 5x$
+Multiplicación
+Se multiplican los coeficientes (números) que acompañen a la variable con el mismo
+exponente, y se suman los exponentes (las potencias).
+Ejemplo: $(2x)(3x) = 6x^2$
+División
+Se dividen los coeficientes (números) que acompañan a la variable con el mismo exponente,
+y los exponentes se restan.
+Ejemplo: ${String.raw`(6x^3) \div (2x) = 3x^2`}$
+Potencia
+Se realiza la potencia tanto al coeficiente como al exponente.
+Ejemplo: $(2x)^2 = 4x^2$
+Raíz
+Se aplica la raíz tanto al coeficiente como al exponente.
+Ejemplo: ${String.raw`\sqrt{(9x)^4} = 3x^2`}$
+);
+}

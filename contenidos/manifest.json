@@ -1,0 +1,163 @@
+[
+  {
+    "tema_id": 1,
+    "materia": "Aritmética",
+    "tema": "Números Reales",
+    "componente": "Seccion11",
+    "chars": 489
+  },
+  {
+    "tema_id": 2,
+    "materia": "Aritmética",
+    "tema": "Potencias Enteras Positivas y Leyes de Exponentes",
+    "componente": "Seccion12",
+    "chars": 20
+  },
+  {
+    "tema_id": 3,
+    "materia": "Aritmética",
+    "tema": "Raíz Cuadrada",
+    "componente": "Seccion13",
+    "chars": 1594
+  },
+  {
+    "tema_id": 4,
+    "materia": "Aritmética",
+    "tema": "Operaciones y Jerarquía",
+    "componente": "Seccion14",
+    "chars": 1357
+  },
+  {
+    "tema_id": 5,
+    "materia": "Aritmética",
+    "tema": "Operaciones con fracciones",
+    "componente": "Seccion15",
+    "chars": 3423
+  },
+  {
+    "tema_id": 6,
+    "materia": "Álgebra",
+    "tema": "Expresiones algebraicas con una variable",
+    "componente": "Seccion21",
+    "chars": 1034
+  },
+  {
+    "tema_id": 7,
+    "materia": "Álgebra",
+    "tema": "Tipo de expresiones",
+    "componente": "Seccion211",
+    "chars": 21
+  },
+  {
+    "tema_id": 8,
+    "materia": "Álgebra",
+    "tema": "Ecuaciones",
+    "componente": "Seccion212",
+    "chars": 636
+  },
+  {
+    "tema_id": 9,
+    "materia": "Álgebra",
+    "tema": "Inecuaciones en una variable",
+    "componente": "Seccion213",
+    "chars": 879
+  },
+  {
+    "tema_id": 10,
+    "materia": "Álgebra",
+    "tema": "Ecuaciones lineales en varias variables",
+    "componente": "Seccion22",
+    "chars": 1537
+  },
+  {
+    "tema_id": 11,
+    "materia": "Álgebra",
+    "tema": "Sistema de ecuaciones con 2 variables (2x2)",
+    "componente": "Seccion222",
+    "chars": 4316
+  },
+  {
+    "tema_id": 12,
+    "materia": "Álgebra",
+    "tema": "Polinomios",
+    "componente": "Seccion23",
+    "chars": 3573
+  },
+  {
+    "tema_id": 13,
+    "materia": "Álgebra",
+    "tema": "Multiplicación y división de polinomios",
+    "componente": "Seccion231",
+    "chars": 3957
+  },
+  {
+    "tema_id": 14,
+    "materia": "Álgebra",
+    "tema": "Factorización de polinomios",
+    "componente": "Seccion24",
+    "chars": 991
+  },
+  {
+    "tema_id": 15,
+    "materia": "Álgebra",
+    "tema": "Factorización parte 2",
+    "componente": "Seccion241",
+    "chars": 1655
+  },
+  {
+    "tema_id": 16,
+    "materia": "Álgebra",
+    "tema": "Factorización parte 3",
+    "componente": "Seccion242",
+    "chars": 2277
+  },
+  {
+    "tema_id": 17,
+    "materia": "Álgebra",
+    "tema": "Expresiones algebraicas racionales o fracciones algebraicas",
+    "componente": "Seccion25",
+    "chars": 1835
+  },
+  {
+    "tema_id": 18,
+    "materia": "Álgebra",
+    "tema": "Suma y resta de expresiones algebraicas racionales",
+    "componente": "Seccion252",
+    "chars": 2313
+  },
+  {
+    "tema_id": 19,
+    "materia": "Álgebra",
+    "tema": "Multiplicación y división de expresiones algebraicas racionales",
+    "componente": "Seccion253",
+    "chars": 2654
+  },
+  {
+    "tema_id": 20,
+    "materia": "Álgebra",
+    "tema": "Ecuaciones cuadráticas",
+    "componente": "Seccion26",
+    "chars": 5493
+  },
+  {
+    "tema_id": 21,
+    "materia": "Álgebra",
+    "tema": "Plano cartesiano",
+    "componente": "Seccion27",
+    "chars": 1431
+  },
+  {
+    "tema_id": 22,
+    "materia": "Álgebra",
+    "tema": "Funciones y sus gráficas",
+    "componente": "Seccion28",
+    "chars": 2603
+  },
+  {
+    "tema_id": 23,
+    "materia": "Álgebra",
+    "tema": "Sistemas de ecuaciones lineales en dos variables",
+    "componente": "Seccion29",
+    "chars": 3393
+  }
+]
